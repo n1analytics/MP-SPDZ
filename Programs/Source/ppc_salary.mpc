@@ -1,0 +1,25 @@
+# import ppc algorithm
+from ppc import *
+
+SOURCE0 = 0
+SOURCE1 = 1
+SOURCE2 = 2
+
+# read data
+source0_record = read_array(SOURCE0, 3, pfloat)
+source1_record = read_array(SOURCE1, 3, pfloat)
+source2_record = read_array(SOURCE2, 4, pfloat)
+
+
+def do_compute(source0_record, source1_record, source2_record):
+
+    result_total = source0_record[0] + source0_record[1] + source0_record[2] + source1_record[0] + source1_record[1] + \
+        source1_record[2] + source2_record[0] + \
+        source2_record[1] + source2_record[2] + source2_record[3]
+    result_average = result_total / 10
+
+    println("Final salary total is %s", result_total.reveal())
+    println("Final salary average is %s", result_average.reveal())
+
+
+do_compute(source0_record, source1_record, source2_record)

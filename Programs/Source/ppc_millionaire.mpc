@@ -1,0 +1,20 @@
+# import ppc algorithm
+from ppc import *
+
+SOURCE0 = 0
+SOURCE1 = 1
+
+# read data
+source0_record = read_array(SOURCE0, 1, pint)
+source1_record = read_array(SOURCE1, 1, pint)
+
+def do_compute(source0_record, source1_record):
+
+    result_value = condition(source0_record[0] > source1_record[0], 1, 2)
+    println("Millionaire %s is rich ", result_value.reveal())
+    println("In fact, first millionaire's asset is %s million",
+            source0_record[0].reveal())
+    println("In fact, second millionaire's asset is %s million",
+            source1_record[0].reveal())
+
+do_compute(source0_record, source1_record)

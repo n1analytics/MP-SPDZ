@@ -1,0 +1,41 @@
+
+#  ETP 8808 = <class 'Compiler.types.sfix'> / <class 'Compiler.types.sfix'>
+#  EEE 0 = 8188, 0.9296
+#  EEE 0 = 0.4242, 3.052e-05
+#  EEE 0 = 577.6, 0.06558
+#  EEE 0 = 1.494, 0.0001831
+#  EEE 0 = 9.932, 0.001144
+#  EEE 0 = 0.007248, 0
+#  EEE 0 = 30.42, 0.003433
+#  EEE 0 = 0.03448, 0
+#  EEE 0 = 0.00325, 0
+#  EEE 0 = 0.0001831, 0
+#  ETP 7.861e+04 = <class 'Compiler.types.sfix'> / <class 'Compiler.types.sfix'>
+#  EEE 1 = 721.2, -12.17
+#  EEE 1 = 5.797e+04, -978
+#  EEE 1 = 0.001495, 0
+#  EEE 1 = 5.541, -0.09312
+#  EEE 1 = 0.008957, 0
+#  EEE 1 = 0.1179, -0.001511
+#  EEE 1 = 0.007172, 0
+#  EEE 1 = 1.973e+04, -261
+#  EEE 1 = 0.01309, 0
+#  EEE 1 = 181.8, -2.405
+
+sfix.set_precision(32, 63)
+cfix.set_precision(32, 63)
+
+# a = [721.2, 5.797e+04, 0.001495, 5.541, 0.008957, 0.1179, 0.007172, 1.973e+04, 0.01309, 181.8]
+a = [721.2, 5.797e+04, 0.001495, 5.541, 0.008957, 0.1179, 0.007172, 1.973e+04, 0.01309, 181.8]
+# b = 7.861e+04
+
+ax = [sfix(e) for e in a]
+bx = sum(ax)
+
+bxv = bx.expand_to_vector(10)
+
+cv = ax / bxv
+
+# for i in range(len(a)):
+#     # c = ax[i]/bx
+#     print_ln("%s/%s \t= %s", ax[i].reveal(), bx.reveal(), cv.reveal())

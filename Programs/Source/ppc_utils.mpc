@@ -1,0 +1,113 @@
+# import ppc algorithm
+from Compiler.library import for_range
+from Compiler.ppc import print_array, read_array, read_matrix
+from ppc import *
+
+
+int_source_record = read_array(0, 2, pint)
+float_source_record = read_array(0, 2, pfloat)
+fix_source_record = read_array(0, 2, pfix)
+num_source_record = read_array(0, 2, pnum)
+int_matrix_record = read_matrix(0, 2, 4)
+
+def test_order():
+    pint_array = Array(4, pint)
+    pint_array[0] = pint(1)
+    pint_array[1] = pint(2)
+    pint_array[2] = pint(4)
+    pint_array[3] = pint(3)
+    (result, index) = max_in_array(pint_array)
+    println("result is %s", result.reveal())
+    println("index is %s", index.reveal())
+
+def test_combine():
+    combine1 = combine_array(int_source_record,int_source_record)
+    combine2 = combine_array(float_source_record, float_source_record)
+    combine3 = combine_array(fix_source_record, fix_source_record)
+    combine4 = combine_array(num_source_record, num_source_record)
+    println("combine1[3] is %s", combine1[3].reveal())
+    println("combine2[3] is %s", combine2[3].reveal())
+    println("combine3[3] is %s", combine3[3].reveal())
+    println("combine4[3] is %s", combine4[3].reveal())
+    println("int_matrix_record[1-3] is %s", int_matrix_record[1][3].reveal())
+
+def test_machine_larning():
+    train_record_count = 3
+    ml1 = pConv2d([train_record_count, 5, 6, 1], (16, 3, 3, 1), (16,), [train_record_count, 3, 4, 16], (1, 1))
+    println("ml1 type is %s", type(ml1))
+    ml2 = pMaxPool([train_record_count, 3, 4, 16])
+    println("ml2 type is %s", type(ml2))
+    ml3 = pRelu([train_record_count, 1, 2, 16])
+    println("ml3 type is %s", type(ml3))
+    n_inner = 499
+    ml4 = pDense(train_record_count, 32, n_inner, activation='relu')
+    println("ml4 type is %s", type(ml4))
+
+def test_display():
+    name_list = ["age", "test", "what"]
+    set_display_field_names(name_list)
+    value_list = [pint(3).reveal(), pint(4).reveal(), pfix(5.11).reveal()]
+    display_data(value_list)
+
+def test_div():
+    a = read_array(0, 2)
+    m = read_matrix(1, 2, 2)
+
+    x = a[0] * m[1][1]
+    println("%s", x.reveal())
+
+    b = pint(100)
+    @for_range(1, 22)
+    def _(i):
+        println("%s/%s     = %s", b.reveal(), i, (b/i).reveal())
+        println("%s//%s    = %s", b.reveal(), i, (b//i).reveal())
+        println("f(%s)/%s  = %s", b.reveal(), i, (pnum(b)/i).reveal())
+
+    @for_range(2)
+    def _(i):
+        m[i][0] = m[i][1] * a[i]
+
+    print_matrix(m)
+    print_array(a)
+
+def test_operations():
+    a_int = pint(2)
+    b_int = pint(3)
+    r1_int  = a_int + b_int
+    r2_int  = a_int - b_int
+    r3_int  = a_int * b_int
+    r4_int  = a_int // b_int
+    println("pint(2) + pint(3) is %s", r1_int.reveal())
+    println("pint(2) - pint(3) is %s", r2_int.reveal())
+    println("pint(2) * pint(3) is %s", r3_int.reveal())
+    println("pint(2) // pint(3) is %s", r4_int.reveal())
+
+    a_fix = pfix(1.1)
+    b_fix = pfix(-2.3)
+    r1_fix = a_fix + b_fix
+    r2_fix = a_fix - b_fix
+    r3_fix = a_fix * b_fix
+    r4_fix = a_fix / b_fix
+    println("pfix(1.1) + pfix(-2.3) is %s", r1_fix.reveal())
+    println("pfix(1.1) - pfix(-2.3) is %s", r2_fix.reveal())
+    println("pfix(1.1) * pfix(-2.3) is %s", r3_fix.reveal())
+    println("pfix(1.1) / pfix(-2.3) is %s", r4_fix.reveal())
+
+    a_float = pfloat(-2.12)
+    b_float = pfloat(3.34)
+    r1_float = a_float + b_float
+    r2_float = a_float - b_float
+    r3_float = a_float * b_float
+    r4_float = a_float / b_float
+    println("pfloat(-2.12) + pfloat(3.34) is %s", r1_float.reveal())
+    println("pfloat(-2.12) - pfloat(3.34) is %s", r2_float.reveal())
+    println("pfloat(-2.12) * pfloat(3.34) is %s", r3_float.reveal())
+    println("pfloat(-2.12) / pfloat(3.34) is %s", r4_float.reveal())
+
+
+test_order()
+test_combine()
+test_machine_larning()
+test_display()
+test_div()
+test_operations()

@@ -1,0 +1,13 @@
+def test_inf_for():
+    m1 = Matrix(10, 2, sfix)
+
+    @for_range_opt(10)
+    def _(i):
+        print_ln("%s, %s", m1[i][0].reveal(), m1[i][1].reveal())
+
+
+
+# test_if_else()
+# test_load_matrix()
+# test_sfix_overflow()
+test_inf_for()

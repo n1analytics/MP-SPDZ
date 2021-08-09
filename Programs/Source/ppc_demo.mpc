@@ -1,0 +1,60 @@
+#PSI_OPTION=True
+
+#from util import if_else
+from ppc import condition
+
+n_threads = 64
+n_parallel = 8
+
+program.bit_length = 32
+source_record_count=5
+#source_record_count=$(ppc_max_record_count)
+SOURCE0=0
+source0_column_count=1
+source0_record= Matrix(source_record_count, source0_column_count, sint)
+SOURCE1=1
+source1_column_count=1
+source1_record= Matrix(source_record_count, source1_column_count, sfix)
+
+result_value = Array(10, sfix)
+catch_number = Array(10, sfix)
+
+def read_source0_data(party_id):
+    @for_range_opt(source_record_count)
+    def _(i):
+        for j in range(source0_column_count):
+            source0_record[i][j] = sint.get_input_from(party_id)
+
+def read_source1_data(party_id):
+    @for_range_opt(source_record_count)
+    def _(i):
+        for j in range(source1_column_count):
+            source1_record[i][j] = sfix.get_input_from(party_id)
+
+def make_compute_step(party_id):
+    @for_range(5)
+    #@for_range($(ppc_max_record_count))
+    def _(i):
+        for j in range(0,1):
+            match_big = source0_record[i][0] > (j*10)
+            match_small = source0_record[i][0] < (j*10+10)
+            print_ln("result_value%s = %s", j, result_value[j].reveal())
+            print_ln("source1_record= %s", source1_record[i][0].reveal())
+            print_ln("catch_number%s= %s", j, catch_number[j].reveal())
+
+            result_value[j] = condition(match_big==match_small, source1_record[i][0] + result_value[j], result_value[j])
+            catch_number[j] = condition(match_big==match_small, catch_number[j] + 1, catch_number[j])
+            print_ln("rnow result_value%s = %s", j, result_value[j].reveal())
+            print_ln("rnow catch_number%s = %s", j, catch_number[j].reveal())
+
+
+read_source0_data(SOURCE0)
+read_source1_data(SOURCE1)
+
+make_compute_step(SOURCE0)
+for i in range(0,2):
+    result_final = condition(catch_number[i]==sfix(0), sfix(0), (result_value[i]/catch_number[i]))
+    print_ln("catch_number i = %s", catch_number[i].reveal())
+    print_ln("result_value i = %s", result_value[i].reveal())
+
+    print_ln("result_value = %s", result_final.reveal())

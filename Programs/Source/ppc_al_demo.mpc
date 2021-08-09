@@ -1,0 +1,20 @@
+from ppc import *
+
+SOURCE0=0
+SOURCE1=1
+
+source0_record = read_array(SOURCE0, 1, pint)
+source1_record = read_array(SOURCE1, 1, pint)
+
+def make_compute_step(source0_record, source1_record):
+    match_big = source0_record[0] > 10
+    match_small = source1_record[0] < 20
+
+    result_value = sint(0)
+    result_value = condition(match_big==match_small, source1_record[0] + result_value, result_value)
+    println("now result_value = %s", result_value.reveal())
+    println("now source0_record = %s", source0_record[0].reveal())
+    println("now source1_record = %s", source1_record[0].reveal())
+
+
+make_compute_step(source0_record, source1_record)

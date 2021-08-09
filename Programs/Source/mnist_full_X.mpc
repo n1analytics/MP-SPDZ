@@ -1,0 +1,165 @@
+# this trains network A from SecureNN
+# see https://github.com/csiro-mlai/mnist-mpc for data preparation
+
+import ml
+import math
+import re
+import util
+
+#ml.report_progress = True
+
+program.options_from_args()
+# sfix.set_precision_from_args(program, adapt_ring=True)
+
+if 'profile' in program.args:
+    print('Compiling for profiling')
+    N = 1000
+    n_test = 100
+elif 'debug' in program.args:
+    N = 100
+    n_test = 100
+elif 'debug5000' in program.args:
+    N = n_test = 5000
+else:
+    N = 60000
+    n_test = 10000
+
+n_examples = N
+n_features = 28 ** 2
+
+try:
+    n_epochs = int(program.args[1])
+except:
+    n_epochs = 100
+
+try:
+    batch_size = int(program.args[2])
+except:
+    batch_size = N
+
+N = min(N, 10000)
+ml.Layer.back_batch_size = batch_size
+
+try:
+    ml.set_n_threads(int(program.args[3]))
+except:
+    pass
+
+n_inner = 128
+
+if 'fc512' in program.args:
+    n_inner = 512
+
+if 'norelu' in program.args:
+    activation = 'id'
+else:
+    activation = 'relu'
+
+if 'nearest' in program.args:
+    sfix.round_nearest = True
+
+if program.options.ring:
+    assert sfix.f * 4 == int(program.options.ring)
+
+debug_ml = ('debug_ml' in program.args) * 2 ** (sfix.f / 2)
+
+if '1dense' in program.args:
+    layers = [ml.Dense(n_examples, n_features, 10, debug=debug_ml)]
+else:
+    layers = [ml.Dense(n_examples, n_features, n_inner, activation=activation, debug=debug_ml),
+              ml.Dense(N, n_inner, n_inner, activation=activation, debug=debug_ml),
+              ml.Dense(N, n_inner, 10, debug=debug_ml)]
+
+if 'dropout' in program.args:
+    for i in range(len(layers) - 1, 0, -1):
+        layers.insert(i, ml.Dropout(N, n_inner))
+
+if 'dropout-late' in program.args:
+    layers.insert(-1, ml.Dropout(N, n_inner))
+
+if 'dropout-early' in program.args:
+    layers.insert(0, ml.Dropout(n_examples, n_features))
+
+if 'dropout-early.25' in program.args:
+    layers.insert(0, ml.Dropout(n_examples, n_features, alpha=.25))
+
+layers += [ml.MultiOutput.from_args(program, n_examples, 10)]
+
+layers[-1].cheaper_loss = 'mse' in program.args
+
+if '2dense' in program.args:
+    del layers[1]
+
+program.disable_memory_warnings()
+
+Y = sint.Matrix(n_test, 10)
+X = sfix.Matrix(n_test, n_features)
+
+if not ('no_acc' in program.args and 'no_loss' in program.args):
+    layers[-1].Y.input_from(0)
+    layers[0].X.input_from(0)
+    Y.input_from(0)
+    X.input_from(0)
+
+sgd = ml.Optimizer.from_args(program, layers)
+#sgd.print_update_average = True
+
+if 'faster' in program.args:
+    sgd.gamma = MemValue(cfix(.1))
+
+if 'slower' in program.args:
+    sgd.gamma = MemValue(cfix(.001))
+
+sgd.run_by_args(program, n_epochs, batch_size,
+                X, Y, acc_batch_size=N)
+
+output_layer = layers[-1]
+
+# 128
+print_ln("bs = %s, %s, %s", batch_size, X.sizes, Y.sizes)
+
+
+sample_size = 150
+X_sample = sfix.Matrix(sample_size, n_features)
+Y_sample = sint.Matrix(sample_size, 10)
+
+for i in range(sample_size):
+    X_sample[i] = X[i]
+    Y_sample[i] = Y[i]
+
+n_test = len(Y_sample)
+# n_correct, loss = sgd.reveal_correctness(X_sample, Y_sample, batch_size)
+
+batch_size = sample_size
+n_correct = MemValue(0)
+
+def f(start, batch_size, batch):
+    batch.assign_vector(regint.inc(batch_size, start))
+    sgd.forward(batch=batch)
+    part_truth = Y_sample.get_part(start, batch_size)
+    n_correct.iadd(
+        sgd.layers[-1].reveal_correctness(batch_size, part_truth))
+sgd.run_in_batches(f, X_sample, batch_size)
+
+
+# for i in range(sample_size):
+#     xx = sgd.layers[-1].X[i].reveal_list()
+#     yy = Y_sample[i].reveal_list()
+#     print_ln("%s: %s, %s, %s, %s", i, xx, yy, ml.argmax(xx), ml.argmax(yy))
+
+
+# print_ln('test loss: %s', loss)
+print_ln('acc: %s (%s/%s)',
+            cfix(n_correct, k=63, f=31) / n_test,
+            n_correct, n_test)
+
+output_layer = sgd.layers[-1]
+print_str("y_label ")
+for i in range(150):
+    print_str('%s,', Y_sample[i].reveal())
+print_ln()
+
+print_str("y_pred ")
+for i in range(150):
+    print_str('%s,', output_layer.X[i].reveal())
+print_ln()

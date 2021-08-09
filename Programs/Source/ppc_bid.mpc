@@ -1,0 +1,34 @@
+# import ppc algorithm
+from ppc import *
+
+SOURCE0 = 0
+SOURCE1 = 1
+SOURCE2 = 2
+
+# read data
+source0_record = read_array(SOURCE0, 1)
+source1_record = read_array(SOURCE1, 1)
+source2_record = read_array(SOURCE2, 1)
+
+
+def do_compute(source0_record, source1_record, source2_record):
+
+    bid_array_tmp = combine_array(source0_record, source1_record)
+    bid_array_result = combine_array(bid_array_tmp, source2_record)
+    max_value, index = max_in_array(bid_array_result)
+    # max_value, index = max_in_array(bid_array_tmp)
+    print_array(bid_array_result)
+
+    winner_index = index.reveal()
+    println("max_value is %s", max_value.reveal())
+    println("winner index is %s", winner_index)
+    # clear hightest bid
+    bid_array_result[winner_index] = pnum(0)
+    print_array(bid_array_result)
+    max_value_result, index = max_in_array(bid_array_result)
+    # (max_value_result, index) = max_in_array(bid_array_result)
+    println("final bid price is %s", max_value_result.reveal())
+
+
+# 执行计算函数
+do_compute(source0_record, source1_record, source2_record)

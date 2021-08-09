@@ -1,0 +1,21 @@
+from ppc import *
+
+SOURCE0 = 0
+SOURCE1 = 1
+SOURCE2 = 2
+
+source0_record = read_array(SOURCE0, 1, pint)
+source1_record = read_array(SOURCE1, 1, pint)
+source2_record = read_array(SOURCE2, 1, pint)
+
+def do_compute(source0_record, source1_record, source2_record):
+
+    num_xor = source0_record[0].bit_xor(source1_record[0])
+    num_and = source0_record[0].bit_and(source2_record[0])
+    num_not = source1_record[0].bit_not()
+
+    println("num_xor is %s", num_xor.reveal())
+    println("num_and is %s", num_and.reveal())
+    println("num_not is %s", num_not.reveal())
+
+do_compute(source0_record, source1_record, source2_record)
