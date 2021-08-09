@@ -10,6 +10,9 @@
 
 #include "Math/gfp.hpp"
 
+#include <string>
+#include "PpcConstant.h"
+
 using namespace std;
 
 OnlineOptions OnlineOptions::singleton;
@@ -69,7 +72,7 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
           "-OF", // Flag token.
           "--output-file" // Flag token.
     );
- 
+
     string default_lgp = to_string(lgp);
     if (variable_prime_length)
     {
@@ -171,6 +174,17 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
             "-B", // Flag token.
             "--bucket-size" // Flag token.
     );
+    opt.add(
+            "", // Default.
+            0, // Required?
+            1, // Number of args expected.
+            0, // Delimiter if expecting multiple args.
+            "Where to obtain memory file, old|empty (default: empty)\n\t"
+            "old: reuse previous memory in Memory-<type>-P<i>\n\t"
+            "empty: create new empty memory", // Help description.
+            "-MF", // Flag token.
+            "--memory-file" // Flag token.
+    );
 
     opt.parse(argc, argv);
 
@@ -193,6 +207,10 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
 
     opt.get("-IF")->getString(cmd_private_input_file);
     opt.get("-OF")->getString(cmd_private_output_file);
+
+    std::string prefix;
+    opt.get("-MF")->getString(prefix);
+    set_prefix(prefix);
 
     direct = opt.isSet("--direct");
 

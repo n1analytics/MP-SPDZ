@@ -5,6 +5,7 @@
 
 #include "BaseMachine.h"
 #include "Math/Setup.h"
+#include "PpcConstant.h"
 
 #include <iostream>
 #include <sodium.h>
@@ -129,8 +130,12 @@ void BaseMachine::print_timers()
     cerr << "Time" << it->first << " = " << it->second.elapsed() << " seconds " << endl;
 }
 
-string BaseMachine::memory_filename(const string& type_short, int my_number)
-{
+string BaseMachine::memory_filename(const string &type_short, int my_number) {
+  std::string prefix = get_prefix();
+  if (prefix.size() != 0) {
+    return PREP_DIR "" + prefix + "-Memory-" + type_short + "-P" +
+           to_string(my_number);
+  }
   return PREP_DIR "Memory-" + type_short + "-P" + to_string(my_number);
 }
 
