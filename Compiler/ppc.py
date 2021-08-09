@@ -37,6 +37,7 @@ def display_data(field_values):
 
 def display_array(array):
     printfmt("result_values =")
+
     @for_range(array.length)
     def _(i):
         printfmt(" %s", array[i].reveal())
@@ -224,7 +225,7 @@ def safe_load(mem_address, value_type, item_size):
     if mem_address + item_size >= config.USER_MEM:
         sys.exit("Out of Memory")
     println("Loading from [%s, %s], size = %s",
-             mem_address, mem_address+item_size, item_size)
+            mem_address, mem_address+item_size, item_size)
     data = value_type.load_mem(mem_address, size=item_size)
     return mem_address + item_size, data
 
@@ -282,7 +283,7 @@ def pint_mod(self, other):
 
 
 def pint_div(self, other):
-    if isinstance(other, int):s
+    if isinstance(other, int):
         l = math.log(other, 2)
         if 2**int(round(l)) == other:
             println("%s, %s, %s", (self >> l).reveal(), self.reveal(), l)
