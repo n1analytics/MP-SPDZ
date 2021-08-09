@@ -1,10 +1,8 @@
 import util
 import math
 
-from Compiler.types import Array, sint, sfloat, sfix, MemValue, cint, Matrix, _int
-# import operator
-# import math
-# from Compiler.instructions import *
+from Compiler import config
+from Compiler.types import Array, sint, sfloat, sfix, MemValue, Matrix, _int
 from Compiler.library import for_range, print_str, for_range, print_float_prec
 import ml
 
@@ -25,6 +23,7 @@ ppcMaxPool = ml.MaxPool
 ppcRelu = ml.Relu
 ppcDense = ml.Dense
 
+
 def set_display_field_names(name_list):
     println("result_fields = %s", ' '.join(name_list))
 
@@ -36,51 +35,23 @@ def display_data(field_values):
     println()
 
 
-def get_ml_size(shape_array):
-    ml_size = 1
-    for i in range(1, len(shape_array)):
-        ml_size *= shape_array[i]
-    return ml_size
+def display_array(array):
+    printfmt("result_values =")
+    @for_range(array.length)
+    def _(i):
+        printfmt(" %s", array[i].reveal())
+    println()
 
 
-def pConv2d(input_shape, weight_shape, bias_shape, output_shape, stride,
-            padding='SAME', tf_weight_format=False, inputs=None):
-    input_shape_size = get_ml_size(input_shape)
-    if input_shape_size > MAX_ML_SIZE:
-        raise TypeError('input_shape could not larger than %s', MAX_ML_SIZE)
-    bias_shape_size = get_ml_size(bias_shape)
-    if bias_shape_size > MAX_ML_SIZE:
-        raise TypeError('bias_shape could not larger than %s', MAX_ML_SIZE)
-    return ml.FixConv2d(input_shape, weight_shape, bias_shape, output_shape, stride,
-                        padding, tf_weight_format=False, inputs=None)
+def display_matrix(matrix):
+    @for_range(matrix.sizes[0])
+    def _(i):
+        printfmt("result_values =")
 
-
-def pMaxPool(shape, strides=(1, 2, 2, 1), ksize=(1, 2, 2, 1),
-             padding='VALID'):
-    shape_size = get_ml_size(shape)
-    if shape_size > MAX_ML_SIZE:
-        raise TypeError('shape could not larger than %s', MAX_ML_SIZE)
-    strides_size = get_ml_size(strides)
-    if strides_size > MAX_ML_SIZE:
-        raise TypeError('strides_size could not larger than %s', MAX_ML_SIZE)
-    ksize_size = get_ml_size(ksize)
-    if ksize_size > MAX_ML_SIZE:
-        raise TypeError('ksize_size could not larger than %s', MAX_ML_SIZE)
-    return ml.MaxPool(shape, strides, ksize,
-                      padding)
-
-
-def pRelu(shape, inputs=None):
-    shape_size = get_ml_size(shape)
-    if shape_size > MAX_ML_SIZE:
-        raise TypeError('shape could not larger than %s', MAX_ML_SIZE)
-    return ml.Relu(shape, inputs)
-
-
-def pDense(N, d_in, d_out, d=1, activation='id', debug=False):
-    if d_out > MAX_ML_SIZE:
-        raise TypeError('d_out could not larger than %s', MAX_ML_SIZE)
-    return ml.Dense(N, d_in, d_out, d, activation, debug)
+        @for_range(matrix.sizes[1])
+        def _(j):
+            printfmt(" %s", matrix[i][j].reveal())
+        println()
 
 
 def read_array(party_id, source_record_count, value_type=pnum):
@@ -169,6 +140,120 @@ def printfmt(s='', *args):
     print_str(s, *args)
 
 
+def get_ml_size(shape_array):
+    ml_size = 1
+    for i in range(1, len(shape_array)):
+        ml_size *= shape_array[i]
+    return ml_size
+
+
+def pConv2d(input_shape, weight_shape, bias_shape, output_shape, stride,
+            padding='SAME', tf_weight_format=False, inputs=None):
+    input_shape_size = get_ml_size(input_shape)
+    if input_shape_size > MAX_ML_SIZE:
+        raise TypeError('input_shape could not larger than %s', MAX_ML_SIZE)
+    bias_shape_size = get_ml_size(bias_shape)
+    if bias_shape_size > MAX_ML_SIZE:
+        raise TypeError('bias_shape could not larger than %s', MAX_ML_SIZE)
+    return ml.FixConv2d(input_shape, weight_shape, bias_shape, output_shape, stride,
+                        padding, tf_weight_format, inputs)
+
+
+def pMaxPool(shape, strides=(1, 2, 2, 1), ksize=(1, 2, 2, 1),
+             padding='VALID'):
+    shape_size = get_ml_size(shape)
+    if shape_size > MAX_ML_SIZE:
+        raise TypeError('shape could not larger than %s', MAX_ML_SIZE)
+    strides_size = get_ml_size(strides)
+    if strides_size > MAX_ML_SIZE:
+        raise TypeError('strides_size could not larger than %s', MAX_ML_SIZE)
+    ksize_size = get_ml_size(ksize)
+    if ksize_size > MAX_ML_SIZE:
+        raise TypeError('ksize_size could not larger than %s', MAX_ML_SIZE)
+    return ml.MaxPool(shape, strides, ksize,
+                      padding)
+
+
+def pRelu(shape, inputs=None):
+    shape_size = get_ml_size(shape)
+    if shape_size > MAX_ML_SIZE:
+        raise TypeError('shape could not larger than %s', MAX_ML_SIZE)
+    return ml.Relu(shape, inputs)
+
+
+def pDense(N, d_in, d_out, d=1, activation='id', debug=False):
+    if d_out > MAX_ML_SIZE:
+        raise TypeError('d_out could not larger than %s', MAX_ML_SIZE)
+    return ml.Dense(N, d_in, d_out, d, activation, debug)
+
+
+DEFAULT_USER_MEM_START = 0
+
+
+def safe_store(mem_address, item, item_size):
+    print("Item size:", item_size)
+    if mem_address + item_size >= config.USER_MEM:
+        sys.exit("Out of Memory")
+    item.store_in_mem(mem_address)
+    return mem_address + item_size
+
+
+def safe_store_collection(mem_address, item):
+    return safe_store(mem_address, item.get_vector(), item.total_size())
+
+
+def safe_store_layers(layers, mem_address=DEFAULT_USER_MEM_START):
+    for layer in layers:
+        if isinstance(layer, ml.ConvBase):
+            println("Saving Conv")
+            mem_address = safe_store_collection(mem_address, layer.weights)
+            mem_address = safe_store_collection(mem_address, layer.bias)
+        elif isinstance(layer, ppcDense):
+            println("Saving Dense")
+            mem_address = safe_store_collection(mem_address, layer.W)
+            mem_address = safe_store_collection(mem_address, layer.b)
+        elif isinstance(layer, ml.NoVariableLayer) or isinstance(layer, ml.ElementWiseLayer):
+            pass
+        else:
+            println("Unknown layer type: %s", type(layer))
+            assert False
+
+
+def safe_load(mem_address, value_type, item_size):
+    print("Item size:", item_size)
+    if mem_address + item_size >= config.USER_MEM:
+        sys.exit("Out of Memory")
+    println("Loading from [%s, %s], size = %s",
+             mem_address, mem_address+item_size, item_size)
+    data = value_type.load_mem(mem_address, size=item_size)
+    return mem_address + item_size, data
+
+
+def safe_load_collection(mem_address, item):
+    mem_address, data = safe_load(
+        mem_address, item.value_type, item.total_size())
+    item.assign_vector(data)
+    return mem_address
+
+
+def safe_load_layers(layers, mem_address=DEFAULT_USER_MEM_START):
+    for layer in layers:
+        if isinstance(layer, ml.ConvBase):
+            println("Loading Conv")
+            mem_address = safe_load_collection(mem_address, layer.weights)
+            mem_address = safe_load_collection(mem_address, layer.bias)
+        elif isinstance(layer, ml.Dense):
+            println("Loading Dense")
+            mem_address = safe_load_collection(mem_address, layer.W)
+            mem_address = safe_load_collection(mem_address, layer.b)
+        elif isinstance(layer, ml.NoVariableLayer) or isinstance(layer, ml.ElementWiseLayer):
+            # No internal parameters for NoVariableLayer and ElementWiseLayer, do nothing.
+            pass
+        else:
+            println("Unknown layer type: %s", type(layer))
+            assert False
+
+
 def to_pint(num):
     if isinstance(num, pint):
         return num
@@ -197,7 +282,7 @@ def pint_mod(self, other):
 
 
 def pint_div(self, other):
-    if isinstance(other, int):
+    if isinstance(other, int):s
         l = math.log(other, 2)
         if 2**int(round(l)) == other:
             println("%s, %s, %s", (self >> l).reveal(), self.reveal(), l)
@@ -225,5 +310,5 @@ def pint_floordiv(self, other):
 
 
 pint.__mod__ = pint_mod
-# pint.__truediv__ = pint_floordiv
+pint.__truediv__ = pint_floordiv
 pint.__floordiv__ = pint_floordiv
