@@ -283,16 +283,8 @@ def pint_mod(self, other):
 
 
 def pint_div(self, other):
-    if isinstance(other, int):
-        l = math.log(other, 2)
-        if 2**int(round(l)) == other:
-            # println("%s, %s, %s", (self >> l).reveal(), self.reveal(), l)
-            return self >> l
-        else:
-            return pfix(self) / other
-
     # pfloat sometime produces buggy results, has to use pfix here.
-    if isinstance(other, _int):
+    if isinstance(other, int) or isinstance(other, _int):
         return pfix(self) / other
 
     raise NotImplementedError(
@@ -311,5 +303,4 @@ def pint_floordiv(self, other):
 
 
 pint.__mod__ = pint_mod
-# pint.__truediv__ = pint_floordiv
 pint.__floordiv__ = pint_floordiv
