@@ -8,7 +8,7 @@ SOURCE1 = 1
 source0_record = read_array(SOURCE0, 1, pint)
 source1_record = read_array(SOURCE1, 1, pint)
 
-def do_compute(source0_record, source1_record):
+def ppc_main(source0_record, source1_record):
 
     result_value = condition(source0_record[0] > source1_record[0], 1, 2)
     println("Millionaire %s is rich ", result_value.reveal())
@@ -17,4 +17,4 @@ def do_compute(source0_record, source1_record):
     println("In fact, second millionaire's asset is %s million",
             source1_record[0].reveal())
 
-do_compute(source0_record, source1_record)
+ppc_main(source0_record, source1_record)
