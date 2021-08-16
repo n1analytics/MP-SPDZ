@@ -12,16 +12,43 @@ pfloat = sfloat
 pfix = sfix
 pnum = pfloat
 
-print_float_prec(4)
+print_float_prec(7)
 
 # Use to limit the tester workload
 MAX_DATA_LENGTH = 500
 MAX_ML_SIZE = 500
+SECOND_LOOP_SIZE = 1000
 
 ppcConv2d = ml.FixConv2d
 ppcMaxPool = ml.MaxPool
 ppcRelu = ml.Relu
 ppcDense = ml.Dense
+
+
+def do_split_loop2(loop_size, callback):
+    if loop_size > SECOND_LOOP_SIZE:
+        loop1 = int(loop_size / SECOND_LOOP_SIZE)
+        print(f"loop1:{loop1}")
+
+        @for_range(loop1)
+        def _(j):
+            @for_range(SECOND_LOOP_SIZE)
+            def _(i):
+                callback(j*SECOND_LOOP_SIZE + i)
+
+        used_record_count = loop1 * SECOND_LOOP_SIZE
+        loop2 = loop_size - used_record_count
+        print(f"loop2:{loop2}")
+        if loop2 > 0:
+            @for_range(loop2)
+            def _(i):
+                callback(used_record_count+i)
+    else:
+        print(f"loop:{loop_size}")
+
+        @for_range(loop_size)
+        def _(i):
+            callback(i)
 
 
 def set_display_field_names(name_list):
