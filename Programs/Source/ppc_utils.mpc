@@ -10,6 +10,7 @@ fix_source_record = read_array(0, 2, pfix)
 num_source_record = read_array(0, 2, pnum)
 int_matrix_record = read_matrix(0, 2, 4)
 
+
 def test_order():
     pint_array = Array(4, pint)
     pint_array[0] = pint(1)
@@ -20,8 +21,9 @@ def test_order():
     println("result is %s", result.reveal())
     println("index is %s", index.reveal())
 
+
 def test_combine():
-    combine1 = combine_array(int_source_record,int_source_record)
+    combine1 = combine_array(int_source_record, int_source_record)
     combine2 = combine_array(float_source_record, float_source_record)
     combine3 = combine_array(fix_source_record, fix_source_record)
     combine4 = combine_array(num_source_record, num_source_record)
@@ -31,23 +33,29 @@ def test_combine():
     println("combine4[3] is %s", combine4[3].reveal())
     println("int_matrix_record[1-3] is %s", int_matrix_record[1][3].reveal())
 
-def test_machine_larning():
-    train_record_count = 3
-    ml1 = pConv2d([train_record_count, 5, 6, 1], (16, 3, 3, 1), (16,), [train_record_count, 3, 4, 16], (1, 1))
-    println("ml1 type is %s", type(ml1))
-    ml2 = pMaxPool([train_record_count, 3, 4, 16])
-    println("ml2 type is %s", type(ml2))
-    ml3 = pRelu([train_record_count, 1, 2, 16])
-    println("ml3 type is %s", type(ml3))
-    n_inner = 499
-    ml4 = pDense(train_record_count, 32, n_inner, activation='relu')
-    println("ml4 type is %s", type(ml4))
+# def test_machine_larning():
+#     train_record_count = 3
+#     ml1 = pConv2d([train_record_count, 5, 6, 1], (16, 3, 3, 1), (16,), [train_record_count, 3, 4, 16], (1, 1))
+#     println("ml1 type is %s", type(ml1))
+#     ml2 = pMaxPool([train_record_count, 3, 4, 16])
+#     println("ml2 type is %s", type(ml2))
+#     ml3 = pRelu([train_record_count, 1, 2, 16])
+#     println("ml3 type is %s", type(ml3))
+#     n_inner = 499
+#     ml4 = pDense(train_record_count, 32, n_inner, activation='relu')
+#     println("ml4 type is %s", type(ml4))
+
 
 def test_display():
     name_list = ["age", "test", "what"]
     set_display_field_names(name_list)
+    # Cause compile error
+    # name_list = ["age value", "test_tset", "what"]
+    name_list = ["age_value", "test_tset", "what"]
+    set_display_field_names(name_list)
     value_list = [pint(3).reveal(), pint(4).reveal(), pfix(5.11).reveal()]
     display_data(value_list)
+
 
 def test_div():
     a = read_array(0, 2)
@@ -57,6 +65,7 @@ def test_div():
     println("%s", x.reveal())
 
     b = pint(100)
+
     @for_range(1, 22)
     def _(i):
         println("%s/%s     = %s", b.reveal(), i, (b/i).reveal())
@@ -70,13 +79,14 @@ def test_div():
     print_matrix(m)
     print_array(a)
 
+
 def test_operations():
     a_int = pint(2)
     b_int = pint(3)
-    r1_int  = a_int + b_int
-    r2_int  = a_int - b_int
-    r3_int  = a_int * b_int
-    r4_int  = a_int // b_int
+    r1_int = a_int + b_int
+    r2_int = a_int - b_int
+    r3_int = a_int * b_int
+    r4_int = a_int // b_int
     println("pint(2) + pint(3) is %s", r1_int.reveal())
     println("pint(2) - pint(3) is %s", r2_int.reveal())
     println("pint(2) * pint(3) is %s", r3_int.reveal())
@@ -107,7 +117,7 @@ def test_operations():
 
 test_order()
 test_combine()
-test_machine_larning()
+# test_machine_larning()
 test_display()
 test_div()
 test_operations()
