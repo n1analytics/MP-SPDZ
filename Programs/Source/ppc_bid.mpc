@@ -11,7 +11,7 @@ source1_record = read_array(SOURCE1, 1)
 source2_record = read_array(SOURCE2, 1)
 
 
-def do_compute(source0_record, source1_record, source2_record):
+def ppc_main(source0_record, source1_record, source2_record):
 
     bid_array_tmp = combine_array(source0_record, source1_record)
     bid_array_result = combine_array(bid_array_tmp, source2_record)
@@ -31,4 +31,4 @@ def do_compute(source0_record, source1_record, source2_record):
 
 
 # 执行计算函数
-do_compute(source0_record, source1_record, source2_record)
+ppc_main(source0_record, source1_record, source2_record)

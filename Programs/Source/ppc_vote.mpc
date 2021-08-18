@@ -15,7 +15,7 @@ source2_record = read_array(SOURCE2, candidate_count, pint)
 source3_record = read_array(SOURCE3, candidate_count, pint)
 source4_record = read_array(SOURCE4, candidate_count, pint)
 
-def do_compute(source0_record, source1_record, source2_record, source3_record, source4_record):
+def ppc_main(source0_record, source1_record, source2_record, source3_record, source4_record):
 
     candidate0 = source0_record[0] + source1_record[0] + source2_record[0] + source3_record[0] + source4_record[0]
     candidate1 = source0_record[1] + source1_record[1] + source2_record[1] + source3_record[1] + source4_record[1]
@@ -32,4 +32,4 @@ def do_compute(source0_record, source1_record, source2_record, source3_record, s
     println("Candidate2 final score is %s", candidate2.reveal())
     println("Candidate2 average score is %s", candidate2_average.reveal())
 
-do_compute(source0_record, source1_record, source2_record, source3_record, source4_record)
+ppc_main(source0_record, source1_record, source2_record, source3_record, source4_record)

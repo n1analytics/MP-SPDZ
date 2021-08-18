@@ -52,6 +52,10 @@ def do_split_loop2(loop_size, callback):
 
 
 def set_display_field_names(name_list):
+    for name in name_list:
+        if " " in name:
+            raise TypeError(
+                'Space can not in title list, found type error', name)
     println("result_fields = %s", ' '.join(name_list))
 
 
