@@ -10,8 +10,8 @@
 
 #include "Math/gfp.hpp"
 
-#include <string>
 #include "PpcConstant.h"
+#include <string>
 
 using namespace std;
 
@@ -31,159 +31,155 @@ OnlineOptions::OnlineOptions() : playerno(-1)
     cmd_private_output_file = "";
 }
 
-OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
-        const char** argv, int default_batch_size, bool default_live_prep,
-        bool variable_prime_length) :
-        OnlineOptions()
+OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc, const char** argv,
+    int default_batch_size, bool default_live_prep, bool variable_prime_length)
+  : OnlineOptions()
 {
     if (default_batch_size <= 0)
         default_batch_size = batch_size;
 
     opt.syntax = std::string(argv[0]) + " [OPTIONS] [<playerno>] <progname>";
 
-    opt.add(
-          "", // Default.
-          0, // Required?
-          0, // Number of args expected.
-          0, // Delimiter if expecting multiple args.
-          "Interactive mode in the main thread (default: disabled)", // Help description.
-          "-I", // Flag token.
-          "--interactive" // Flag token.
+    opt.add("",  // Default.
+        0,       // Required?
+        0,       // Number of args expected.
+        0,       // Delimiter if expecting multiple args.
+        "Interactive mode in the main thread (default: disabled)",  // Help description.
+        "-I",                                                       // Flag token.
+        "--interactive"                                             // Flag token.
     );
-    opt.add(
-          cmd_private_input_file.c_str(), // Default.
-          0, // Required?
-          1, // Number of args expected.
-          0, // Delimiter if expecting multiple args.
-          "Prefix for input file path (default: Player-Data/Private-Input). "
-          "Input will be read from {prefix}-P{id}-{thread_id}.", // Help description.
-          "-IF", // Flag token.
-          "--input-file" // Flag token.
+    opt.add(cmd_private_input_file.c_str(),  // Default.
+        0,                                   // Required?
+        1,                                   // Number of args expected.
+        0,                                   // Delimiter if expecting multiple args.
+        "Prefix for input file path (default: Player-Data/Private-Input). "
+        "Input will be read from {prefix}-P{id}-{thread_id}.",  // Help description.
+        "-IF",                                                  // Flag token.
+        "--input-file"                                          // Flag token.
     );
-    opt.add(
-          cmd_private_output_file.c_str(), // Default.
-          0, // Required?
-          1, // Number of args expected.
-          0, // Delimiter if expecting multiple args.
-          "Prefix for output file path "
-          "(default: output to stdout for party 0 (silent otherwise "
-          "unless interactive mode is active). "
-          "Output will be written to {prefix}-P{id}-{thread_id}.", // Help description.
-          "-OF", // Flag token.
-          "--output-file" // Flag token.
+    opt.add(cmd_private_output_file.c_str(),  // Default.
+        0,                                    // Required?
+        1,                                    // Number of args expected.
+        0,                                    // Delimiter if expecting multiple args.
+        "Prefix for output file path "
+        "(default: output to stdout for party 0 (silent otherwise "
+        "unless interactive mode is active). "
+        "Output will be written to {prefix}-P{id}-{thread_id}.",  // Help description.
+        "-OF",                                                    // Flag token.
+        "--output-file"                                           // Flag token.
     );
 
     string default_lgp = to_string(lgp);
     if (variable_prime_length)
     {
-        opt.add(
-                default_lgp.c_str(), // Default.
-                0, // Required?
-                1, // Number of args expected.
-                0, // Delimiter if expecting multiple args.
-                ("Bit length of GF(p) field (default: " + default_lgp + ")").c_str(), // Help description.
-                "-lgp", // Flag token.
-                "--lgp" // Flag token.
+        opt.add(default_lgp.c_str(),  // Default.
+            0,                        // Required?
+            1,                        // Number of args expected.
+            0,                        // Delimiter if expecting multiple args.
+            ("Bit length of GF(p) field (default: " + default_lgp + ")").c_str(),  // Help
+                                                                                   // description.
+            "-lgp",                                                                // Flag token.
+            "--lgp"                                                                // Flag token.
         );
-        opt.add(
-                "", // Default.
-                0, // Required?
-                1, // Number of args expected.
-                0, // Delimiter if expecting multiple args.
-                "Prime for GF(p) field (default: read from file or "
-                "generated from -lgp argument)", // Help description.
-                "-P", // Flag token.
-                "--prime" // Flag token.
+        opt.add("",  // Default.
+            0,       // Required?
+            1,       // Number of args expected.
+            0,       // Delimiter if expecting multiple args.
+            "Prime for GF(p) field (default: read from file or "
+            "generated from -lgp argument)",  // Help description.
+            "-P",                             // Flag token.
+            "--prime"                         // Flag token.
         );
     }
     if (default_live_prep)
-        opt.add(
-                "", // Default.
-                0, // Required?
-                0, // Number of args expected.
-                0, // Delimiter if expecting multiple args.
-                "Preprocessing from files", // Help description.
-                "-F", // Flag token.
-                "--file-preprocessing" // Flag token.
+        opt.add("",                      // Default.
+            0,                           // Required?
+            0,                           // Number of args expected.
+            0,                           // Delimiter if expecting multiple args.
+            "Preprocessing from files",  // Help description.
+            "-F",                        // Flag token.
+            "--file-preprocessing"       // Flag token.
         );
     else
-        opt.add(
-                "", // Default.
-                0, // Required?
-                0, // Number of args expected.
-                0, // Delimiter if expecting multiple args.
-                "Live preprocessing", // Help description.
-                "-L", // Flag token.
-                "--live-preprocessing" // Flag token.
+        opt.add("",                 // Default.
+            0,                      // Required?
+            0,                      // Number of args expected.
+            0,                      // Delimiter if expecting multiple args.
+            "Live preprocessing",   // Help description.
+            "-L",                   // Flag token.
+            "--live-preprocessing"  // Flag token.
         );
-    opt.add(
-            "", // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "This player's number (required if not given before program name)", // Help description.
-            "-p", // Flag token.
-            "--player" // Flag token.
+    opt.add("",  // Default.
+        0,       // Required?
+        1,       // Number of args expected.
+        0,       // Delimiter if expecting multiple args.
+        "This player's number (required if not given before program name)",  // Help description.
+        "-p",                                                                // Flag token.
+        "--player"                                                           // Flag token.
     );
 
-    opt.add(
-            to_string(default_batch_size).c_str(), // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            ("Size of preprocessing batches (default: " + to_string(default_batch_size) + ")").c_str(), // Help description.
-            "-b", // Flag token.
-            "--batch-size" // Flag token.
+    opt.add(to_string(default_batch_size).c_str(),  // Default.
+        0,                                          // Required?
+        1,                                          // Number of args expected.
+        0,                                          // Delimiter if expecting multiple args.
+        ("Size of preprocessing batches (default: " + to_string(default_batch_size) + ")")
+            .c_str(),   // Help description.
+        "-b",           // Flag token.
+        "--batch-size"  // Flag token.
     );
-    opt.add(
-            memtype.c_str(), // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "Where to obtain memory, old|empty (default: empty)\n\t"
-            "old: reuse previous memory in Memory-<type>-P<i>\n\t"
-            "empty: create new empty memory", // Help description.
-            "-m", // Flag token.
-            "--memory" // Flag token.
+    opt.add(memtype.c_str(),  // Default.
+        0,                    // Required?
+        1,                    // Number of args expected.
+        0,                    // Delimiter if expecting multiple args.
+        "Where to obtain memory, old|empty (default: empty)\n\t"
+        "old: reuse previous memory in Memory-<type>-P<i>\n\t"
+        "empty: create new empty memory",  // Help description.
+        "-m",                              // Flag token.
+        "--memory"                         // Flag token.
     );
-    opt.add(
-            "", // Default.
-            0, // Required?
-            0, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "Compute random bits from squares", // Help description.
-            "-Q", // Flag token.
-            "--bits-from-squares" // Flag token.
+    opt.add("",                              // Default.
+        0,                                   // Required?
+        0,                                   // Number of args expected.
+        0,                                   // Delimiter if expecting multiple args.
+        "Compute random bits from squares",  // Help description.
+        "-Q",                                // Flag token.
+        "--bits-from-squares"                // Flag token.
     );
-    opt.add(
-            "", // Default.
-            0, // Required?
-            0, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "Direct communication instead of star-shaped "
-            "(only for dishonest-majority protocols)", // Help description.
-            "-d", // Flag token.
-            "--direct" // Flag token.
+    opt.add("",  // Default.
+        0,       // Required?
+        0,       // Number of args expected.
+        0,       // Delimiter if expecting multiple args.
+        "Direct communication instead of star-shaped "
+        "(only for dishonest-majority protocols)",  // Help description.
+        "-d",                                       // Flag token.
+        "--direct"                                  // Flag token.
     );
-    opt.add(
-            "4", // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "Batch size for sacrifice (3-5, default: 4)", // Help description.
-            "-B", // Flag token.
-            "--bucket-size" // Flag token.
+    opt.add("4",                                       // Default.
+        0,                                             // Required?
+        1,                                             // Number of args expected.
+        0,                                             // Delimiter if expecting multiple args.
+        "Batch size for sacrifice (3-5, default: 4)",  // Help description.
+        "-B",                                          // Flag token.
+        "--bucket-size"                                // Flag token.
     );
-    opt.add(
-            "", // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
-            "Where to obtain memory file, old|empty (default: empty)\n\t"
-            "old: reuse previous memory in Memory-<type>-P<i>\n\t"
-            "empty: create new empty memory", // Help description.
-            "-MF", // Flag token.
-            "--memory-file" // Flag token.
+    opt.add("",  // Default.
+        0,       // Required?
+        1,       // Number of args expected.
+        0,       // Delimiter if expecting multiple args.
+        "Where to obtain memory file, old|empty (default: empty)\n\t"
+        "old: reuse previous memory in Memory-<type>-P<i>\n\t"
+        "empty: create new empty memory",  // Help description.
+        "-MF",                             // Flag token.
+        "--memory-file"                    // Flag token.
+    );
+
+    opt.add("",                      // Default.
+        0,                           // Required?
+        1,                           // Number of args expected.
+        0,                           // Delimiter if expecting multiple args.
+        "Preprocessing from files",  // Help description.
+        "-S",                        // Flag token.
+        "--socket-sleep"             // Flag token.
     );
 
     opt.parse(argc, argv);
@@ -212,6 +208,10 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
     opt.get("-MF")->getString(prefix);
     set_prefix(prefix);
 
+    int socket_flags;
+    opt.get("-S")->getInt(socket_flags);
+    set_socket_flag(socket_flags);
+
     direct = opt.isSet("--direct");
 
     opt.get("--bucket-size")->getInt(bucket_size);
@@ -219,8 +219,7 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
     opt.resetArgs();
 }
 
-void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc,
-        const char** argv)
+void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc, const char** argv)
 {
     opt.resetArgs();
     opt.parse(argc, argv);
@@ -263,8 +262,7 @@ void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc,
     if (!opt.gotExpected(badOptions))
     {
         for (i = 0; i < badOptions.size(); ++i)
-            cerr << "ERROR: Got unexpected number of arguments for option "
-                    << badOptions[i] << ".";
+            cerr << "ERROR: Got unexpected number of arguments for option " << badOptions[i] << ".";
         opt.getUsage(usage);
         cout << usage;
         exit(1);
@@ -276,8 +274,8 @@ void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc,
         if (prime != 0 and prime != schedule_prime and schedule_prime != 0)
         {
             cerr << "Different prime for compilation and computation." << endl;
-            cerr << "Run with '--prime " << schedule_prime
-                    << "' or compile with '--prime " << prime << "'." << endl;
+            cerr << "Run with '--prime " << schedule_prime << "' or compile with '--prime " << prime
+                 << "'." << endl;
             exit(1);
         }
         if (schedule_prime != 0)
