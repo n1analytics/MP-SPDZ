@@ -19,8 +19,9 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>   /* Wait for Process Termination */
-
+#include "Processor/PpcConstant.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 
@@ -40,6 +41,18 @@ void send(T socket, octet* msg, size_t len);
 template<class T>
 void receive(T socket, octet* msg, size_t len);
 
+inline std::string BinaryToHexString(
+        unsigned char* msg,
+        size_t len
+        )
+    {
+        std::stringstream ss;
+        for(int i=0; i<(int)len; ++i)
+            ss << std::hex << (int)msg[i];
+        std::string mystr = ss.str();
+
+        return mystr;
+    }
 
 inline size_t send_non_blocking(int socket, octet* msg, size_t len)
 {
@@ -54,9 +67,31 @@ inline size_t send_non_blocking(int socket, octet* msg, size_t len)
   return j;
 }
 
+inline void write_ppc_debug_file(int socket, octet* msg, size_t len, bool debug_flag, std::string role) {
+    if(debug_flag) {
+        time_t timep;
+        time(&timep);
+        struct tm *p_time;
+        p_time = gmtime(&timep);
+        std::ostringstream os_time;
+        std::ostringstream os_time_log;
+        os_time << "-" <<  1900 + p_time->tm_year << "-" << p_time->tm_mon + 1 << "-" << p_time->tm_mday;
+        os_time_log << p_time->tm_hour << ":"<< p_time->tm_min << ":"<< p_time->tm_sec << ":";
+        std::string time_prefix = os_time.str();
+        std::string iPid = "-PID-" + std::to_string(getpid());
+        std::string file_name = PPC_DEBUG_PREFIEX + role + iPid + time_prefix + ".log";
+        ofstream ppc_debug_log;
+        ppc_debug_log.open(file_name, std::ios_base::app);
+        ppc_debug_log << os_time_log.str() << "socketId:" << socket << ":message:"<< BinaryToHexString(msg, len) << "\n";
+        ppc_debug_log.close();
+    }
+}
+
 template<>
 inline void send(int socket,octet *msg,size_t len)
 {
+    bool debug_flag = get_debug_flag();
+    write_ppc_debug_file(socket, msg, len, debug_flag, "Sender");
   size_t i = 0;
   while (i < len)
     {
@@ -100,6 +135,8 @@ inline void receive(int socket,octet *msg,size_t len)
       else
         throw closed_connection();
     }
+    bool debug_flag = get_debug_flag();
+    write_ppc_debug_file(socket, msg, len, debug_flag, "Receiver");
 }
 
 template<class T>
