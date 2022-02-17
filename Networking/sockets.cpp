@@ -2,6 +2,7 @@
 #include "sockets.h"
 #include "Tools/Exceptions.h"
 #include "Tools/time-func.h"
+#include "Processor/OnlineOptions.h"
 
 #include <iostream>
 #include <fcntl.h>
@@ -101,15 +102,16 @@ void set_up_client_socket(int& mysocket,const char* hostname,int Portnum)
        errno = connect_errno;
    }
    while (fl == -1
-       && (errno == ECONNREFUSED || errno == ETIMEDOUT || errno == EINPROGRESS)
-       && timer.elapsed() < 60);
+       && (errno == ECONNREFUSED || errno == ETIMEDOUT || errno == EINPROGRESS || errno == EHOSTUNREACH)
+       && timer.elapsed() < OnlineOptions::singleton.connection_timeout);
 
    if (fl < 0)
      {
        throw runtime_error(
            string() + "cannot connect from " + my_name + " to " + hostname + ":"
                + to_string(Portnum) + " after " + to_string(attempts)
-               + " attempts in one minute because " + strerror(connect_errno) + ". "
+               + " attempts in " + to_string(OnlineOptions::singleton.connection_timeout) + " seconds because " +
+               strerror(connect_errno) + ". "
                "https://mp-spdz.readthedocs.io/en/latest/troubleshooting.html#"
                "connection-failures has more information on port requirements.");
      }

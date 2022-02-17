@@ -30,6 +30,9 @@ OnlineOptions::OnlineOptions() : playerno(-1)
     cmd_private_output_file = "";
     file_prep_per_thread = false;
     trunc_error = 40;
+    connection_timeout = 60;
+
+
 #ifdef VERBOSE
     verbose = true;
 #else
@@ -103,6 +106,15 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
             "-B", // Flag token.
             "--bucket-size" // Flag token.
     );
+    opt.add(
+            "60", // Default.
+            0, // Required?
+            1, // Number of args expected.
+            0, // Delimiter if expecting multiple args.
+            "Connection time out in seconds. (default: 60)", // Help description.
+            "-C", // Flag token.
+            "--timeout" // Flag token.
+    );
 
     opt.parse(argc, argv);
 
@@ -112,6 +124,7 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
     opt.get("-OF")->getString(cmd_private_output_file);
 
     opt.get("--bucket-size")->getInt(bucket_size);
+    opt.get("--timeout")->getInt(connection_timeout);
 
 #ifndef VERBOSE
     verbose = opt.isSet("--verbose");

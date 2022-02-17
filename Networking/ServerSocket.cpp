@@ -8,6 +8,7 @@
 #include "Tools/Exceptions.h"
 #include "Tools/time-func.h"
 #include "Tools/octetStream.h"
+#include "Processor/OnlineOptions.h"
 
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
@@ -195,8 +196,11 @@ int ServerSocket::get_connection_socket(const string& id)
 
   while (clients.find(id) == clients.end())
   {
-      if (data_signal.wait(60) == ETIMEDOUT)
-          throw runtime_error("No client after one minute");
+      if (data_signal.wait(OnlineOptions::singleton.connection_timeout) == ETIMEDOUT) {
+          stringstream  ss;
+          ss << "No client after " << OnlineOptions::singleton.connection_timeout << " seconds.";
+          throw runtime_error(ss.str());
+      }
   }
 
   int client_socket = clients[id];

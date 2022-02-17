@@ -31,6 +31,7 @@ public:
     bool verbose;
     bool file_prep_per_thread;
     int trunc_error;
+    int connection_timeout;
 
     OnlineOptions();
     OnlineOptions(ez::ezOptionParser& opt, int argc, const char** argv,
