@@ -104,6 +104,10 @@ parties. In the default setting, it's 5000 on party 0, and
 ``--my-port``. The scripts in use a random base port number, which you
 can also change with ``--portnumbase``.
 
+When running computations with many (100 or more) parties, the default
+timeout of 60 seconds might be triggered. In this case, you can adjust
+the timeout using the ``--timeout`` parameter.
+
 
 Internally called tape has unknown offline data usage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
