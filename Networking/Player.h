@@ -430,8 +430,8 @@ class PlainPlayer : public MultiPlayer<int>
 public:
   /**
    * Start a new set of unencrypted connections.
-   * @param Nms network setup
-   * @param id unique identifier
+   * @param Nms network setup      // 计算方个数
+   * @param id unique identifier   //
    */
   PlainPlayer(const Names& Nms, const string& id);
   // legacy interface

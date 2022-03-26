@@ -53,7 +53,7 @@ template<class T> void generate_prime_setup(string, int, int);
 template<int X, int L>
 class gfp_ : public ValueInterface
 {
-  typedef modp_<L> modp_type;
+  typedef modp_<L> modp_type;    // 64bit的模数分支
 
   modp_type a;
   static Zp_Data ZpD;

@@ -70,7 +70,7 @@ public:
     }
 
     static const Zp_Data& get_ZpD();
-    static const bigint& pr();
+    static bigint& pr();
 
     template<class T>
     static void generate_setup(string prep_data_prefix, int nplayers, int lgp);

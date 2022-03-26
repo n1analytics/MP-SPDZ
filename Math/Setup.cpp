@@ -64,6 +64,8 @@ void SPDZ_Data_Setup_Primes(bigint& p,int lgp,int& idx,int& m)
 #ifdef VERBOSE
   cerr << "m = " << m << endl;
 #endif
+
+  // spdz lgp=128,  m = 32768
   generate_prime(p, lgp, m);
 }
 

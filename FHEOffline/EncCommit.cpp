@@ -173,7 +173,7 @@ template<class T,class FD,class S>
 void EncCommit<T,FD,S>::next_active(Plaintext<T,FD,S>& mess, vector<Ciphertext>& C) const
 {
   const FHE_Params& params=(*pk).get_params();
-
+  cout << "121231231:" << Ciphertext(params).c1().lev << endl;
   if (not has_left()) { Create_More(); }
   mess=m[cnt];
   C.resize((*P).num_players(),Ciphertext(params));

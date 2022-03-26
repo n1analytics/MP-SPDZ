@@ -1,6 +1,7 @@
 #ifndef _EncCommit
 #define _EncCommit
 
+// TODO : WHAT???????????
 /* Runs the EncCommit protocol
  *  - Input is the condition
  *  - Output mess for this Player

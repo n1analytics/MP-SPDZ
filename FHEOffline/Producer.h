@@ -67,6 +67,7 @@ public:
 
   string data_type() { return "Triples"; }
 
+  // 构造函数 
   TripleProducer(const FD& Field, int my_num, int output_thread = 0,
       bool write_output = true, string dir = PREP_DIR);
 

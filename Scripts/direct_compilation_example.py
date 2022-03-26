@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, os
+
 sys.path.append(os.curdir)
 
 from Compiler.program import Program, defaults

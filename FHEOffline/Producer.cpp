@@ -33,6 +33,7 @@ TripleProducer<T, FD, S>::TripleProducer(const FD& FieldD,
     x.allocate_slots(FieldD.get_prime());
   // extra limb for addition
   ci.allocate_slots(FieldD.get_prime() << limb_size<S>());
+  cout << "slots of ci" << ci.num_slots() << endl;
   for (auto& x : macs)
     x.allocate_slots(FieldD.get_prime() << limb_size<S>());
   if (write_output)
@@ -100,28 +101,43 @@ Producer<FFT_Data>* new_bit_producer(const FFT_Data& FieldD, const Player& P,
             produce_squares, dir);
 }
 
+// 计算beaver三元组
 template <class T, class FD, class S>
 void TripleProducer<T, FD, S>::run(const Player& P, const FHE_PK& pk,
     const Ciphertext& calpha, EncCommitBase<T, FD, S>& EC,
     DistDecrypt<FD>& dd, const T& alphai)
 {
   (void)alphai;
-
   const FHE_Params& params=pk.get_params();
   map<string, Timer>& timers = this->timers;
 
   Ciphertext ca(params), cb(params);
-
   // Steps a,b,c,d
   timers["Committing"].start();
   EC.next(ai,ca);
   EC.next(bi,cb);
+
+//  for(unsigned int numnum = 0; numnum < ai.num_slots(); numnum++)
+//  {
+//      cout << "plays ai: "<< numnum <<"  //= "<< ai[numnum] << endl;
+//  }
+//
+//  for(unsigned int numnum = 0; numnum < bi.num_slots(); numnum++)
+//  {
+//      cout << "plays bi: "<< numnum <<"  //= "<< bi[numnum] << endl;
+//  }
   timers["Committing"].stop();
+
+  cout<< "c num: " << ca.c1().lev << endl;
+//  cout << "ca c0 : " << ca.c0().a[128].to_vec_bigint().data() << endl;
+//  cout << "ca c1 : " << ca.c1().a[127].to_vec_bigint().data() << endl;
+//  cout << "cb c0 : " << cb.c0().a[127].to_vec_bigint().data() << endl;
+//  cout << "cb c1 : " << cb.c1().a[127].to_vec_bigint().data() << endl;
 
   // Steps e and f
   Ciphertext cab(params),cc(params);
   timers["Multiplying"].start();
-  mul(cab,ca,cb,pk);
+  mul(cab,ca,cb, pk);
   timers["Multiplying"].stop();
   timers["Resharing"].start();
   Reshare(ci,cc,cab,true,P,EC,pk,dd);
@@ -130,9 +146,9 @@ void TripleProducer<T, FD, S>::run(const Player& P, const FHE_PK& pk,
   // Step g
   Ciphertext cgam_a(params),cgam_b(params),cgam_c(params);
   timers["Multiplying"].start();
-  mul(cgam_a,calpha,ca,pk);    
-  mul(cgam_b,calpha,cb,pk);    
-  mul(cgam_c,calpha,cc,pk);    
+  mul(cgam_a,calpha,ca, pk);
+  mul(cgam_b,calpha,cb, pk);
+  mul(cgam_c,calpha,cc, pk);
   timers["Multiplying"].stop();
 
   // Step h

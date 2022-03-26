@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="MP-SPDZ" targetName="overdrive" />
+      <config projectName="MP-SPDZ" targetName="CONFIG" />
+      <config projectName="MP-SPDZ" targetName="yao" />
+      <config projectName="MP-SPDZ" targetName="offline" />
+      <config projectName="MP-SPDZ" targetName="sy" />
+      <config projectName="MP-SPDZ" targetName="mac-machine-setup" />
+      <config projectName="MP-SPDZ" targetName="replicated" />
+      <config projectName="MP-SPDZ" targetName="all" />
+      <config projectName="MP-SPDZ" targetName="gear" />
+      <config projectName="MP-SPDZ" targetName="gen_input" />
+      <config projectName="MP-SPDZ" targetName="real-bmr" />
+      <config projectName="MP-SPDZ" targetName="online" />
+      <config projectName="MP-SPDZ" targetName="she-offline" />
+      <config projectName="MP-SPDZ" targetName="doc" />
+      <config projectName="MP-SPDZ" targetName="rep-bin" />
+      <config projectName="MP-SPDZ" targetName="vm" />
+      <config projectName="MP-SPDZ" targetName="linux-machine-setup" />
+      <config projectName="MP-SPDZ" targetName="semi-he" />
+      <config projectName="MP-SPDZ" targetName="rep-field" />
+      <config projectName="MP-SPDZ" targetName="binary" />
+      <config projectName="MP-SPDZ" targetName="static-release" />
+      <config projectName="MP-SPDZ" targetName="bmr" />
+      <config projectName="MP-SPDZ" targetName="externalIO" />
+      <config projectName="MP-SPDZ" targetName="libSPDZ.so" />
+      <config projectName="MP-SPDZ" targetName="spdz2k" />
+      <config projectName="MP-SPDZ" targetName="mpir-setup" />
+      <config projectName="MP-SPDZ" targetName="tldr" />
+      <config projectName="MP-SPDZ" targetName="mpir" />
+      <config projectName="MP-SPDZ" targetName="mpir-global" />
+      <config projectName="MP-SPDZ" targetName="bmr-clean" />
+      <config projectName="MP-SPDZ" targetName="ecdsa-static" />
+      <config projectName="MP-SPDZ" targetName="rep-ring" />
+      <config projectName="MP-SPDZ" targetName="Makefile" />
+      <config projectName="MP-SPDZ" targetName="mascot" />
+      <config projectName="MP-SPDZ" targetName="mac-setup" />
+      <config projectName="MP-SPDZ" targetName="librelease.a" />
+      <config projectName="MP-SPDZ" targetName="static-dir" />
+      <config projectName="MP-SPDZ" targetName="yao-clean" />
+      <config projectName="MP-SPDZ" targetName="libFHE.so" />
+      <config projectName="MP-SPDZ" targetName="arithmetic" />
+      <config projectName="MP-SPDZ" targetName="ecdsa" />
+      <config projectName="MP-SPDZ" targetName="shamir" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2d8a8398-e8d5-48b5-a4f7-e9c9a695fc6a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="SOFT" />
+  </component>
+  <component name="MakefileLocalSettings">
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="MP-SPDZ" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="MP-SPDZ" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2021" />
+    <option name="minorVersion" value="3.4" />
+  </component>
+  <component name="ProjectId" id="26v2QPqkiZIg2Ycg8zBhyhiOTzB" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ChangesTree.GroupingKeys" value="repository&#10;directory" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="structure.view.defaults.are.configured" value="true" />
+  </component>
+  <component name="RunManager" selected="Makefile Target.spdz2-offline.x">
+    <configuration name="CONFIG" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="CONFIG" CONFIG_NAME="CONFIG" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Makefile" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="Makefile" CONFIG_NAME="Makefile" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="all" CONFIG_NAME="all" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="arithmetic" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="arithmetic" CONFIG_NAME="arithmetic" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="binary" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="binary" CONFIG_NAME="binary" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="bmr-clean" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="bmr-clean" CONFIG_NAME="bmr-clean" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="bmr" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="bmr" CONFIG_NAME="bmr" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="doc" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="doc" CONFIG_NAME="doc" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ecdsa-static" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="ecdsa-static" CONFIG_NAME="ecdsa-static" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ecdsa" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="ecdsa" CONFIG_NAME="ecdsa" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="externalIO" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="externalIO" CONFIG_NAME="externalIO" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gear" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="gear" CONFIG_NAME="gear" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gen_input" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="gen_input" CONFIG_NAME="gen_input" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="libFHE.so" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="libFHE.so" CONFIG_NAME="libFHE.so" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="libSPDZ.so" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="libSPDZ.so" CONFIG_NAME="libSPDZ.so" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="librelease.a" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="librelease.a" CONFIG_NAME="librelease.a" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="linux-machine-setup" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="linux-machine-setup" CONFIG_NAME="linux-machine-setup" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mac-machine-setup" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mac-machine-setup" CONFIG_NAME="mac-machine-setup" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mac-setup" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mac-setup" CONFIG_NAME="mac-setup" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mascot" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mascot" CONFIG_NAME="mascot" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mpir-global" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mpir-global" CONFIG_NAME="mpir-global" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mpir-setup" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mpir-setup" CONFIG_NAME="mpir-setup" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="mpir" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="mpir" CONFIG_NAME="mpir" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="offline" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="offline" CONFIG_NAME="offline" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="online" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="online" CONFIG_NAME="online" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="overdrive" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="overdrive" CONFIG_NAME="overdrive" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="real-bmr" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="real-bmr" CONFIG_NAME="real-bmr" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="rep-bin" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="rep-bin" CONFIG_NAME="rep-bin" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="rep-field" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="rep-field" CONFIG_NAME="rep-field" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="rep-ring" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="rep-ring" CONFIG_NAME="rep-ring" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="replicated" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="replicated" CONFIG_NAME="replicated" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="semi-he" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="semi-he" CONFIG_NAME="semi-he" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="shamir" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="shamir" CONFIG_NAME="shamir" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="she-offline" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="she-offline" CONFIG_NAME="she-offline" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spdz2k" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="spdz2k" CONFIG_NAME="spdz2k" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="static-dir" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="static-dir" CONFIG_NAME="static-dir" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="static-release" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="static-release" CONFIG_NAME="static-release" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sy" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="sy" CONFIG_NAME="sy" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="tldr" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="tldr" CONFIG_NAME="tldr" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="vm" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="vm" CONFIG_NAME="vm" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="yao-clean" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="yao-clean" CONFIG_NAME="yao-clean" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="yao" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MP-SPDZ" TARGET_NAME="yao" CONFIG_NAME="yao" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spdz2-offline.x" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="spdz2-offline.x" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Makefile Application.doc" />
+      <item itemvalue="Makefile Application.mpir" />
+      <item itemvalue="Makefile Application.mpir-global" />
+      <item itemvalue="Makefile Application.mpir-setup" />
+      <item itemvalue="Makefile Application.all" />
+      <item itemvalue="Makefile Application.arithmetic" />
+      <item itemvalue="Makefile Application.binary" />
+      <item itemvalue="Makefile Application.bmr" />
+      <item itemvalue="Makefile Application.bmr-clean" />
+      <item itemvalue="Makefile Application.CONFIG" />
+      <item itemvalue="Makefile Application.ecdsa" />
+      <item itemvalue="Makefile Application.ecdsa-static" />
+      <item itemvalue="Makefile Application.externalIO" />
+      <item itemvalue="Makefile Application.gear" />
+      <item itemvalue="Makefile Application.gen_input" />
+      <item itemvalue="Makefile Application.libFHE.so" />
+      <item itemvalue="Makefile Application.librelease.a" />
+      <item itemvalue="Makefile Application.libSPDZ.so" />
+      <item itemvalue="Makefile Application.linux-machine-setup" />
+      <item itemvalue="Makefile Application.mac-machine-setup" />
+      <item itemvalue="Makefile Application.mac-setup" />
+      <item itemvalue="Makefile Application.Makefile" />
+      <item itemvalue="Makefile Application.mascot" />
+      <item itemvalue="Makefile Application.offline" />
+      <item itemvalue="Makefile Application.online" />
+      <item itemvalue="Makefile Application.overdrive" />
+      <item itemvalue="Makefile Application.real-bmr" />
+      <item itemvalue="Makefile Application.rep-bin" />
+      <item itemvalue="Makefile Application.rep-field" />
+      <item itemvalue="Makefile Application.rep-ring" />
+      <item itemvalue="Makefile Application.replicated" />
+      <item itemvalue="Makefile Application.semi-he" />
+      <item itemvalue="Makefile Application.shamir" />
+      <item itemvalue="Makefile Application.she-offline" />
+      <item itemvalue="Makefile Application.spdz2k" />
+      <item itemvalue="Makefile Application.static-dir" />
+      <item itemvalue="Makefile Application.static-release" />
+      <item itemvalue="Makefile Application.sy" />
+      <item itemvalue="Makefile Application.tldr" />
+      <item itemvalue="Makefile Application.vm" />
+      <item itemvalue="Makefile Application.yao" />
+      <item itemvalue="Makefile Application.yao-clean" />
+      <item itemvalue="Makefile Target.spdz2-offline.x" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Makefile Target.spdz2-offline.x" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2d8a8398-e8d5-48b5-a4f7-e9c9a695fc6a" name="Changes" comment="" />
+      <created>1648289724469</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1648289724469</updated>
+      <workItem from="1648289729883" duration="96000" />
+      <workItem from="1648290037258" duration="1615000" />
+      <workItem from="1648291750175" duration="1509000" />
+      <workItem from="1648293514694" duration="98000" />
+      <workItem from="1648293695209" duration="1127000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

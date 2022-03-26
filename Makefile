@@ -169,6 +169,7 @@ simple-offline.x: $(FHEOFFLINE)
 pairwise-offline.x: $(FHEOFFLINE)
 cnc-offline.x: $(FHEOFFLINE)
 spdz2-offline.x: $(FHEOFFLINE)
+spdz3-offline.x: $(FHEOFFLINE)
 
 yao-party.x: $(YAO)
 static/yao-party.x: $(YAO)

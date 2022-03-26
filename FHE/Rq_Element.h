@@ -30,11 +30,12 @@ void mul(Rq_Element& ans,const Rq_Element& a,const bigint& b);
 class Rq_Element
 {
 protected:
-  vector<Ring_Element> a;
-  int lev;
+
 
   public:
-  
+
+  vector<Ring_Element> a;
+  int lev;
   int n_mults() const { return a.size() - 1; }
 
   void change_rep(RepType r);

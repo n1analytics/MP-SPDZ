@@ -253,7 +253,7 @@ FakeProgramParty::FakeProgramParty(int argc, const char** argv) :
 		threshold = atoi(argv[4]);
 	cout << "Threshold for multi-threaded evaluation: " << threshold << endl;
 }
-
+//
 ProgramParty::~ProgramParty()
 {
 	reset();

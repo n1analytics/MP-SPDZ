@@ -36,7 +36,7 @@ template<class T,class FD,class S> void sqr(Plaintext<T,FD,S>& z,const Plaintext
 
 enum condition { Full, Diagonal, Bits };
 
-enum PT_Type   { Polynomial, Evaluation, Both }; 
+enum PT_Type   { Polynomial, Evaluation, Both };
 
 template<class T,class FD,class _>
 class Plaintext
@@ -46,8 +46,7 @@ class Plaintext
   int n_slots;
   int degree;
 
-  mutable vector<T> a;  // The thing in evaluation/FFT form
-  mutable vector<S> b;  // Now in polynomial form
+
 
   mutable PT_Type type;
 
@@ -61,6 +60,10 @@ class Plaintext
   void set_sizes();
 
   public:
+
+
+  mutable vector<T> a;  // The thing in evaluation/FFT form
+  mutable vector<S> b;  // Now in polynomial form
   
   const FD& get_field() const { return *Field_Data; }
   unsigned int num_slots() const { return n_slots; }
@@ -166,6 +169,7 @@ class Plaintext
 
   AddableVector<S> mul_by_X_i(int i, const FHE_PK& pk) const;
 
+  // 两个明文元素是否相等
   bool equals(const Plaintext& x) const;
   bool operator!=(const Plaintext& x) { return !equals(x); }
 

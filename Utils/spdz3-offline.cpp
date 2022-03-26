@@ -1,5 +1,5 @@
 /*
- * spdz2-offline.cpp
+ * spdz3-offline.cpp
  *
  */
 
@@ -67,8 +67,6 @@ public:
         const Spdz2& spdz2 = setup_thread.spdz2;
         PlainPlayer P(spdz2.N, ((id + 1) << 8) + FD::T::type_char());
         EncCommit_<FD> EC(P, setup.pk, spdz2.covert, producer.required_randomness());
-        // ACTIVE 攻擊者模型
-        // EncCommit_<FD> EC(P, setup.pk, producer.required_randomness(), setup.FieldD, 1);
         DistDecrypt<FD> dd(P, setup.sk, setup.pk, setup.FieldD);
         MAC_Check<typename FD::T> MC(setup.alphai);
         string data_type = producer.data_type();
@@ -91,10 +89,6 @@ public:
             if (stop)
                 break;
 
-            cout << "alphai: " << setup.alphai << endl;
-            cout << "calpha-c[0]: " << setup.calpha.c0().a.data() << endl;
-            cout << "calpha-c[1]: " << setup.calpha.c1().a.data() << endl;
-            cout << "=========================================================================" << endl;
             producer.run(P, setup.pk, setup.calpha, EC, dd, setup.alphai);
             producer.sacrifice(P, MC);
             total += producer.num_slots();
@@ -151,6 +145,7 @@ public:
 //            cout << i << ":::::" << ff.ai[i] << endl;
 //        }
 //        cout << "prep_dir: " << dir << endl;
+
 
         Producer<FD>* producers[] =
         {

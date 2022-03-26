@@ -20,6 +20,7 @@ using namespace std;
 #include "Protocols/fake-stuff.hpp"
 
 template <class FD>
+// 初始化，没做什么东西
 PartSetup<FD>::PartSetup() :
     pk(params, 0), sk(params, 0), calpha(params)
 {
@@ -36,14 +37,17 @@ DataSetup& DataSetup::operator=(const DataSetup& other)
   return *this;
 }
 
+// 创建公私钥，mac认证密钥的加密
 template <class FD>
 void PartSetup<FD>::generate_setup(int n_parties, int plaintext_length, int sec,
     int slack, bool round_up)
 {
+    // 安全参数 最低40
   sec = max(sec, 40);
-  Parameters(n_parties, plaintext_length, sec, slack, round_up).generate_setup(
-      params, FieldD);
+
+  Parameters(n_parties, plaintext_length, sec, slack, round_up).generate_setup(params, FieldD);
   params.set_sec(sec);
+  // 公私钥生成，认证密钥的加密
   pk = FHE_PK(params, FieldD.get_prime());
   sk = FHE_SK(params, FieldD.get_prime());
   calpha = Ciphertext(params);

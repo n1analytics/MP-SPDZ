@@ -69,6 +69,7 @@ DataFieldType gfpvar_<X, L>::field_type()
 template<int X, int L>
 void gfpvar_<X, L>::init_field(bigint prime, bool montgomery)
 {
+    // 给素数域初始化素数 并确定是否使用montgomery模乘
     ZpD.init(prime, montgomery);
     if (ZpD.get_t() > N_LIMBS)
         throw wrong_gfp_size("gfpvar_<X, L>", prime, "MAX_MOD_SZ", ZpD.get_t() * 2);
@@ -87,7 +88,7 @@ const Zp_Data& gfpvar_<X, L>::get_ZpD()
 }
 
 template<int X, int L>
-const bigint& gfpvar_<X, L>::pr()
+bigint& gfpvar_<X, L>::pr()
 {
     return ZpD.pr;
 }

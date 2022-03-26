@@ -279,8 +279,10 @@ void Parameters::SPDZ_Data_Setup(FHE_Params& params, FFT_Data& FTD)
   SPDZ_Data_Setup_Primes(p, plaintext_length, idx, m);
   SPDZ_Data_Setup_Char_p_Sub(idx, m, p, params);
 
+  cout << "prime = "<< to_string(p) << endl;
   Zp_Data Zp(p);
   gfp::init_field(p);
+  cout << &gfp::pr() << endl;
   FTD.init(R,Zp);
 }
 

@@ -9,7 +9,7 @@ GDEBUG = -g
 PREP_DIR = '-DPREP_DIR="Player-Data/"'
 
 # set for SHE preprocessing (SPDZ and Overdrive)
-USE_NTL = 0
+USE_NTL = 1
 
 # set for using GF(2^128)
 # unset for GF(2^40)
