@@ -130,15 +130,21 @@ void sign_benchmark(vector<EcTuple<T>>& tuples, T<P256Element::Scalar> sk,
         SubProcessor<T<P256Element::Scalar>>* proc = 0)
 {
     unsigned char message[1024];
+
+    // Random message
     GlobalPRNG(P).get_octets(message, 1024);
+    
     typename T<P256Element>::Direct_MC MCc(MCp.get_alphai());
 
     // synchronize
     Bundle<octetStream> bundle(P);
     P.unchecked_broadcast(bundle);
+
     Timer timer;
     timer.start();
     auto stats = P.total_comm();
+
+    // sk*P is private key, hence sk is the public key
     P256Element pk = MCc.open(sk, P);
     MCc.Check(P);
     cout << "Public key generation took " << timer.elapsed() * 1e3 << " ms" << endl;
