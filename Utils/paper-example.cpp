@@ -76,7 +76,7 @@ void run(char** argv, int prime_length)
     int n_parties = atoi(argv[2]);
     int port_base = 9999;
     Names N(my_number, n_parties, "localhost", port_base);
-    CryptoPlayer P(N);
+    PlainPlayer P(N);
 
     // protocol setup (domain, MAC key if needed etc)
     ProtocolSetup<T> setup(P, prime_length);
@@ -84,12 +84,11 @@ void run(char** argv, int prime_length)
     // set of protocols (input, multiplication, output)
     ProtocolSet<T> set(P, setup);
     auto& input = set.input;
-    auto& protocol = set.protocol;
+    // auto& protocol = set.protocol;
     auto& output = set.output;
 
     int n = 1000;
     vector<T> a(n), b(n);
-    T c;
     typename T::clear result;
 
     input.reset_all(P);
@@ -102,18 +101,19 @@ void run(char** argv, int prime_length)
         b[i] = input.finalize(1);
     }
 
-    protocol.init_dotprod();
-    for (int i = 0; i < n; i++)
-        protocol.prepare_dotprod(a[i], b[i]);
-    protocol.next_dotprod();
-    protocol.exchange();
-    c = protocol.finalize_dotprod(n);
+    // T c;
+    // protocol.init_dotprod();
+    // for (int i = 0; i < n; i++)
+    //     protocol.prepare_dotprod(a[i], b[i]);
+    // protocol.next_dotprod();
+    // protocol.exchange();
+    // c = protocol.finalize_dotprod(n);
 
     // protocol check before revealing results
     set.check();
 
     output.init_open(P);
-    output.prepare_open(c);
+    output.prepare_open(a[0]);
     output.exchange(P);
     result = output.finalize_open();
 
