@@ -78,6 +78,14 @@ P256Element P256Element::operator -(const P256Element& other) const
     return *this + tmp;
 }
 
+// P256Element P256Element::operator +(const P256Element::Scalar& other) const
+// {
+//     P256Element other_p(other);
+//     P256Element res;
+//     assert(EC_POINT_add(curve, res.point, point, other_p.point, 0) != 0);
+//     return res;
+// }
+
 P256Element P256Element::operator *(const Scalar& other) const
 {
     P256Element res;
@@ -158,4 +166,19 @@ octetStream P256Element::hash(size_t n_bytes) const
     assert(n_bytes >= res.get_length());
     res.resize_precise(n_bytes);
     return res;
+}
+
+void P256Element::randomize(PRNG& G, int n)
+{
+    (void) n;
+    P256Element::Scalar newscalar;
+    newscalar.randomize(G, n);
+    point = P256Element(newscalar).point;
+}
+
+void P256Element::input(istream& s,bool human)
+{ 
+    P256Element::Scalar newscalar;
+    newscalar.input(s,human); 
+    point = P256Element(newscalar).point;
 }

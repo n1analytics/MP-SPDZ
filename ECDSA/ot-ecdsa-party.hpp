@@ -112,7 +112,6 @@ void run(int argc, const char** argv)
     int prime_length = P256Element::Scalar::length();
 
     typedef T<P256Element::Scalar> scalarShare;
-    // typedef T<P256Element> ecShare;
 
     BaseMachine machine;
     machine.ot_setups.push_back({P, true});
@@ -174,6 +173,11 @@ void run(int argc, const char** argv)
     cout << "-->" << pciinputs[0].sk << endl;
     cout << "-->" << result << endl;
     protocolSet.check();
+
+    typedef T<P256Element> ecShare;
+    ProtocolSetup<ecShare> ecprotocolSetup(P, prime_length);
+    ProtocolSet<ecShare> ecprotocolSet(P, ecprotocolSetup);
+
     // OnlineOptions::singleton.batch_size = 1;
 
     // // Direct_MC is a subtype of class pShare -- Direct_MC in Share.h

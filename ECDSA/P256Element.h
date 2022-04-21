@@ -15,6 +15,8 @@ class P256Element : public ValueInterface
 {
 public:
     typedef gfp_<2, 4> Scalar;
+    typedef Scalar::next next; // no idea about sideeffects
+    static const int MAX_N_BITS = 64 * 4;
 
 private:
     static EC_GROUP* curve;
@@ -22,8 +24,9 @@ private:
     EC_POINT* point;
 
 public:
-    typedef void next;
+    // typedef void next;
     typedef void Square;
+
 
     static const true_type invertible;
 
@@ -39,11 +42,17 @@ public:
 
     P256Element& operator=(const P256Element& other);
 
+    void randomize(PRNG& G, int n = -1);
+    void input(istream& s, bool human);
+    static string type_short() { return "ec"; }
+    static DataFieldType field_type() { return DATA_INT; }
+    
     void check();
 
     Scalar x() const;
 
     P256Element operator+(const P256Element& other) const;
+    // P256Element operator+(const P256Element::Scalar& other) const;
     P256Element operator-(const P256Element& other) const;
     P256Element operator*(const Scalar& other) const;
 

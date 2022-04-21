@@ -152,7 +152,7 @@ class Share : public Share_<SemiShare<T>, SemiShare<T>>
 public:
     typedef Share_<SemiShare<T>, SemiShare<T>> super;
 
-    typedef T mac_key_type;
+    typedef typename T::Scalar mac_key_type;
     typedef T mac_type;
 
     typedef Share<typename T::next> prep_type;
