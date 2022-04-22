@@ -9,6 +9,7 @@
 #include "Math/gfp.h"
 #include "ECDSA/P256Element.h"
 #include "Protocols/SemiShare.h"
+#include "Protocols/EcShare.h"
 #include "Processor/BaseMachine.h"
 
 #include "ECDSA/preprocessing.hpp"
@@ -109,9 +110,7 @@ void run(int argc, const char** argv)
     P256Element::init();
     // Initialize scalar:next with same order as field order. ??
     P256Element::Scalar::next::init_field(P256Element::Scalar::pr(), false);
-    int prime_length = P256Element::Scalar::length();
 
-    typedef T<P256Element::Scalar> scalarShare;
 
     BaseMachine machine;
     machine.ot_setups.push_back({P, true});
@@ -137,17 +136,33 @@ void run(int argc, const char** argv)
         pciinputs.push_back({sk, Pk, signature});
     }
 
-    // Protocol Sets
-    ProtocolSetup<scalarShare> protocolSetup(P, prime_length);
-    ProtocolSet<scalarShare> protocolSet(P, protocolSetup);
-    int thisplayer = N.my_num();
+
+    // int prime_length = P256Element::Scalar::length();
+    // typedef T<P256Element> ecShare;
+
+    DataPositions usage(P.num_players());
+
+    typedef T<P256Element::Scalar> scalarShare;
+
+    typename scalarShare::mac_key_type mac_key;
+    scalarShare::read_or_generate_mac_key("", P, mac_key);
+
+    typename scalarShare::MAC_Check output(mac_key);
+
+    typename scalarShare::LivePrep preprocessing(0, usage);
+    
+    SubProcessor<scalarShare> processor(output, preprocessing, P);
+
+    typename scalarShare::Input input(processor.input);
+
 
     // Input Shares
+    int thisplayer = N.my_num();
     vector<scalarShare> inputs_shares[2];
 
 
     // Give Input
-    typename scalarShare::Input input = protocolSet.input;
+    // typename scalarShare::Input input = protocolSet.input;
 
     input.reset_all(P);
     for (int i = 0; i < INPUTSIZE; i++)
@@ -165,18 +180,74 @@ void run(int argc, const char** argv)
 
     // output
     typename scalarShare::clear result;
-    auto& output = protocolSet.output;
+    // auto& output = protocolSet.output;
     output.init_open(P);
     output.prepare_open(inputs_shares[0][0]);
     output.exchange(P);
     result = output.finalize_open();
     cout << "-->" << pciinputs[0].sk << endl;
     cout << "-->" << result << endl;
-    protocolSet.check();
+    output.Check(processor.P);
+
+    // -----------------
+
 
     typedef T<P256Element> ecShare;
-    ProtocolSetup<ecShare> ecprotocolSetup(P, prime_length);
-    ProtocolSet<ecShare> ecprotocolSet(P, ecprotocolSetup);
+
+    typename ecShare::mac_key_type ec_mac_key;
+    ecShare::read_or_generate_mac_key("", P, ec_mac_key);
+
+    typename ecShare::MAC_Check ec_output(ec_mac_key);
+
+    // typename ecShare::LivePrep ec_preprocessing(0, usage);
+    
+    // SubProcessor<ecShare> ec_processor(ec_output, ec_preprocessing, P);
+
+    // typename ecShare::Input ec_input(processor.input);
+
+
+
+
+//     // Protocol Sets
+//     ProtocolSetup<scalarShare> protocolSetup2(P, prime_length);
+//     ProtocolSet<scalarShare> protocolSet2(P, protocolSetup2);
+
+//     // Input Shares
+//     vector<scalarShare> inputs_shares2[2];
+
+
+//     // Give Input
+//     typename scalarShare::Input input2 = protocolSet2.input;
+
+//     input2.reset_all(P);
+//     for (int i = 0; i < INPUTSIZE; i++)
+//         input2.add_from_all(pciinputs[i].sk);
+//     input2.exchange();
+//     for (int i = 0; i < INPUTSIZE; i++)
+//     {
+//         // shares of party A
+//         inputs_shares2[0].push_back(input2.finalize(0));
+
+//         // shares of party B
+//         inputs_shares2[1].push_back(input2.finalize(1));
+//     }
+//     cout << "---- inputs shared ----" << thisplayer << endl;
+
+//     // output
+//     auto& output2 = protocolSet2.output;
+//     output2.init_open(P);
+//     output2.prepare_open(inputs_shares2[0][0]);
+//     output2.exchange(P);
+//     result = output2.finalize_open();
+//     cout << "-->" << pciinputs[0].sk << endl;
+//     cout << "-->" << result << endl;
+//     protocolSet2.check();
+
+
+
+//     typedef T<P256Element> ecShare;
+//     ProtocolSetup<ecShare> ecprotocolSetup(P, prime_length);
+//     ProtocolSet<ecShare> ecprotocolSet(P, ecprotocolSetup);
 
     // OnlineOptions::singleton.batch_size = 1;
 
