@@ -57,6 +57,19 @@ Input<T>::Input(MAC_Check& MC, Preprocessing<T>& prep, Player& P) :
 {
 }
 
+template<class T, class V>
+InputEc<T, V>::InputEc(MAC_Check& MC, Preprocessing<V>& prep, Player& P) :
+        proc(0),
+        MC(MC),
+        prep(prep),
+        P(P),
+        ec_shares(P.num_players()),
+        scalar_shares(P.num_players())
+{
+}
+
+
+
 template<class T>
 InputBase<T>::~InputBase()
 {
@@ -72,6 +85,15 @@ void Input<T>::reset(int player)
     InputBase<T>::reset(player);
     shares[player].clear();
 }
+
+template<class T, class V>
+void InputEc<T, V>::reset(int player)
+{
+    InputBase<T>::reset(player);
+    ec_shares[player].clear();
+    scalar_shares[player].clear();
+}
+
 
 template<class T>
 void InputBase<T>::reset(int player)
@@ -104,6 +126,29 @@ void Input<T>::add_mine(const open_type& input, int n_bits)
     this->values_input++;
 }
 
+
+template<class T, class V>
+void InputEc<T, V>::add_mine(const ec_open_type& input, int n_bits)
+{
+    (void) n_bits;
+    int player = P.my_num();
+
+    ec_shares[player].push_back({});
+    T& ec_share = ec_shares[player].back();
+
+    scalar_shares[player].push_back({});
+    V& scalar_share = scalar_shares[player].back();
+
+
+    prep.get_input(scalar_share, rr, player);
+    t = input - rr;
+    t.pack(this->os[player]);
+    ec_share += T::constant(t, player, MC.get_alphai());
+    this->values_input++;
+}
+
+
+
 template<class T>
 void Input<T>::add_other(int player, int)
 {
@@ -111,6 +156,15 @@ void Input<T>::add_other(int player, int)
     shares.at(player).push_back({});
     prep.get_input(shares[player].back(), t, player);
 }
+
+template<class T, class V>
+void InputEc<T, V>::add_other(int player, int)
+{
+    scalar_open_type t;
+    scalar_shares.at(player).push_back({});
+    prep.get_input(scalar_shares[player].back(), t, player);
+}
+
 
 template<class T>
 void InputBase<T>::add_from_all(const typename T::open_type& input, int n_bits)
@@ -127,6 +181,13 @@ void Input<T>::send_mine()
 {
     P.send_all(this->os[P.my_num()]);
 }
+
+template<class T, class V>
+void InputEc<T, V>::send_mine()
+{
+    P.send_all(this->os[P.my_num()]);
+}
+
 
 template<class T>
 void InputBase<T>::exchange()
@@ -191,12 +252,30 @@ T Input<T>::finalize_mine()
     return shares[P.my_num()].next();
 }
 
+template<class T, class V>
+T InputEc<T, V>::finalize_mine()
+{
+    return ec_shares[P.my_num()].next();
+}
+
+
 template<class T>
 void Input<T>::finalize_other(int player, T& target,
         octetStream& o, int n_bits)
 {
     (void) n_bits;
     target = shares[player].next();
+    t.unpack(o);
+    target += T::constant(t, P.my_num(), MC.get_alphai());
+}
+
+
+template<class T, class V>
+void InputEc<T, V>::finalize_other(int player, T& target,
+        octetStream& o, int n_bits)
+{
+    (void) n_bits;
+    target = ec_shares[player].next();
     t.unpack(o);
     target += T::constant(t, P.my_num(), MC.get_alphai());
 }

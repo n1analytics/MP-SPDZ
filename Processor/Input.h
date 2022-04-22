@@ -112,4 +112,40 @@ public:
     void finalize_other(int player, T& target, octetStream& o, int n_bits = -1);
 };
 
+
+// T - Share<P256Element>, V - Share<P256Element::Scalar>
+template<class T, class V>
+class InputEc : public InputBase<T>
+{
+    typedef typename T::open_type ec_open_type;
+    typedef typename V::open_type scalar_open_type;
+
+    typedef typename T::clear clear;
+    typedef typename T::MAC_Check MAC_Check;
+
+    SubProcessor<T>* proc;
+    MAC_Check& MC;
+    Preprocessing<V>& prep;
+    Player& P;
+    vector< PointerVector<T> > ec_shares;
+    vector< PointerVector<V> > scalar_shares;
+    scalar_open_type rr;
+    ec_open_type t;
+
+public:
+    InputEc(MAC_Check& MC, Preprocessing<V>& prep, Player& P);
+
+    void reset(int player);
+
+    void add_mine(const ec_open_type& input, int n_bits = -1);
+    void add_other(int player, int n_bits = -1);
+
+    void send_mine();
+
+    T finalize_mine();
+    void finalize_other(int player, T& target, octetStream& o, int n_bits = -1);
+};
+
+
+
 #endif /* PROCESSOR_INPUT_H_ */

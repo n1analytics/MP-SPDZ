@@ -203,7 +203,7 @@ void run(int argc, const char** argv)
     
     // SubProcessor<ecShare> ec_processor(ec_output, ec_preprocessing, P);
 
-    // typename ecShare::Input ec_input(processor.input);
+    InputEc<ecShare, scalarShare> ec_input(ec_output, preprocessing, P);
 
 
 
