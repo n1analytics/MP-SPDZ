@@ -66,6 +66,7 @@ InputEc<T, V>::InputEc(MAC_Check& MC, Preprocessing<V>& prep, Player& P) :
         ec_shares(P.num_players()),
         scalar_shares(P.num_players())
 {
+    my_num = P.my_num();
 }
 
 
@@ -139,9 +140,11 @@ void InputEc<T, V>::add_mine(const ec_open_type& input, int n_bits)
     scalar_shares[player].push_back({});
     V& scalar_share = scalar_shares[player].back();
 
-
     prep.get_input(scalar_share, rr, player);
-    t = input - rr;
+
+    scalar_share += V::constant(rr, player, MC.get_alphai());
+
+    t = input - ec_open_type(rr);
     t.pack(this->os[player]);
     ec_share += T::constant(t, player, MC.get_alphai());
     this->values_input++;
@@ -162,9 +165,15 @@ void InputEc<T, V>::add_other(int player, int)
 {
     scalar_open_type t;
     scalar_shares.at(player).push_back({});
-    ec_shares.at(player).push_back({});
     prep.get_input(scalar_shares[player].back(), t, player);
-    // thus scalar_shares[player].back() has the share of rr. how to subtract it from the broadcasted value?
+
+    ec_shares[player].push_back({});
+    T& ec_share = ec_shares[player].back();
+    
+    V& scalar_share = scalar_shares[player].back();
+    ec_open_type ecpoint(scalar_share.get_share());
+    ec_share.set_share(ecpoint);
+
 }
 
 
@@ -294,6 +303,21 @@ T InputBase<T>::finalize(int player, int n_bits)
         return res;
     }
 }
+
+
+// template<class T, class V>
+// T InputEc<T, V>::finalize(int player, int n_bits)
+// {
+//     if (player == my_num)
+//         return finalize_mine();
+//     else
+//     {
+//         T res;
+//         finalize_other(player, res, os[player], n_bits);
+//         return res;
+//     }
+// }
+
 
 template<class T>
 template<class U>

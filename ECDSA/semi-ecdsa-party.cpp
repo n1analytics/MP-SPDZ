@@ -16,5 +16,7 @@
 
 int main(int argc, const char** argv)
 {
-    run<SemiShare>(argc, argv);
+    // run<SemiShare>(argc, argv);
+    (void) argc;
+    (void) argv;
 }

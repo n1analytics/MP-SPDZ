@@ -152,7 +152,7 @@ void run(int argc, const char** argv)
     
     SubProcessor<scalarShare> processor(output, preprocessing, P);
 
-    typename scalarShare::Input input(processor.input);
+    typename scalarShare::Input input(output, preprocessing, P);
 
 
     // Input Shares
@@ -229,15 +229,14 @@ void run(int argc, const char** argv)
     cout << "---- inputs shared ----" << thisplayer << endl;
 
     // // output
-    // typename scalarShare::clear result;
-    // // auto& output = protocolSet.output;
-    // output.init_open(P);
-    // output.prepare_open(ec_inputs_shares[0][0]);
-    // output.exchange(P);
-    // result = output.finalize_open();
-    // cout << "-->" << pciinputs[0].sk << endl;
-    // cout << "-->" << result << endl;
-    // output.Check(processor.P);
+    typename ecShare::clear ec_result;
+    ec_output.init_open(P);
+    ec_output.prepare_open(ec_inputs_shares[0][0]);
+    ec_output.exchange(P);
+    ec_result = ec_output.finalize_open();
+    cout << "-->" << pciinputs[0].Pk << endl;
+    cout << "-->" << ec_result << endl;
+    ec_output.Check(processor.P);
 
 
 

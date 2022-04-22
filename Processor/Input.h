@@ -129,8 +129,9 @@ class InputEc : public InputBase<T>
     Player& P;
     vector< PointerVector<T> > ec_shares;
     vector< PointerVector<V> > scalar_shares;
-    scalar_open_type rr;
+    scalar_open_type rr, xi;
     ec_open_type t;
+    int my_num;
 
 public:
     InputEc(MAC_Check& MC, Preprocessing<V>& prep, Player& P);
@@ -144,6 +145,7 @@ public:
 
     T finalize_mine();
     void finalize_other(int player, T& target, octetStream& o, int n_bits = -1);
+    // T finalize(int player, int n_bits = -1);
 };
 
 
