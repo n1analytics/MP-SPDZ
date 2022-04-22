@@ -162,7 +162,9 @@ void InputEc<T, V>::add_other(int player, int)
 {
     scalar_open_type t;
     scalar_shares.at(player).push_back({});
+    ec_shares.at(player).push_back({});
     prep.get_input(scalar_shares[player].back(), t, player);
+    // thus scalar_shares[player].back() has the share of rr. how to subtract it from the broadcasted value?
 }
 
 

@@ -28,12 +28,11 @@
 
 #include <assert.h>
 
-template<template<class U> class T>
 class PCIInput
 {
 public:
     P256Element::Scalar sk;
-    P256Element PK;
+    P256Element Pk;
     EcSignature signature;
 };
 
@@ -116,7 +115,7 @@ void run(int argc, const char** argv)
     machine.ot_setups.push_back({P, true});
 
     // Generate secret keys and signatures with them
-    vector<PCIInput<T>> pciinputs;
+    vector<PCIInput> pciinputs;
     P256Element::Scalar sk;
 
     SeededPRNG G;
@@ -205,43 +204,40 @@ void run(int argc, const char** argv)
 
     InputEc<ecShare, scalarShare> ec_input(ec_output, preprocessing, P);
 
+    // Input Shares
+    vector<ecShare> ec_inputs_shares[2];
 
 
+    // Give Input
+    // typename scalarShare::Input input = protocolSet.input;
 
-//     // Protocol Sets
-//     ProtocolSetup<scalarShare> protocolSetup2(P, prime_length);
-//     ProtocolSet<scalarShare> protocolSet2(P, protocolSetup2);
+    ec_input.reset_all(P);
+    cout << "----- step 1 ----" << endl;
 
-//     // Input Shares
-//     vector<scalarShare> inputs_shares2[2];
+    ec_input.add_from_all(pciinputs[0].Pk);
+    cout << "---- step 2 ----" << endl;
 
+    ec_input.exchange();
+    cout << "---- step 3 ----" << endl;
 
-//     // Give Input
-//     typename scalarShare::Input input2 = protocolSet2.input;
+    // shares of party A
+    ec_inputs_shares[0].push_back(ec_input.finalize(0));
 
-//     input2.reset_all(P);
-//     for (int i = 0; i < INPUTSIZE; i++)
-//         input2.add_from_all(pciinputs[i].sk);
-//     input2.exchange();
-//     for (int i = 0; i < INPUTSIZE; i++)
-//     {
-//         // shares of party A
-//         inputs_shares2[0].push_back(input2.finalize(0));
+    // shares of party B
+    ec_inputs_shares[1].push_back(ec_input.finalize(1));
 
-//         // shares of party B
-//         inputs_shares2[1].push_back(input2.finalize(1));
-//     }
-//     cout << "---- inputs shared ----" << thisplayer << endl;
+    cout << "---- inputs shared ----" << thisplayer << endl;
 
-//     // output
-//     auto& output2 = protocolSet2.output;
-//     output2.init_open(P);
-//     output2.prepare_open(inputs_shares2[0][0]);
-//     output2.exchange(P);
-//     result = output2.finalize_open();
-//     cout << "-->" << pciinputs[0].sk << endl;
-//     cout << "-->" << result << endl;
-//     protocolSet2.check();
+    // // output
+    // typename scalarShare::clear result;
+    // // auto& output = protocolSet.output;
+    // output.init_open(P);
+    // output.prepare_open(ec_inputs_shares[0][0]);
+    // output.exchange(P);
+    // result = output.finalize_open();
+    // cout << "-->" << pciinputs[0].sk << endl;
+    // cout << "-->" << result << endl;
+    // output.Check(processor.P);
 
 
 
