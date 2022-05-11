@@ -1156,8 +1156,9 @@ class cint(_clear, _int):
 
     def digest(self, num_bytes):
         """ Clear hashing (libsodium default). """
-        res = cint()
-        digestc(res, self, num_bytes)
+        res = cint(size=self.size)
+        for i in range(self.size):
+            digestc(res[i], self[i], num_bytes)
         return res
 
     def print_if(self, string):
