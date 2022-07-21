@@ -110,7 +110,8 @@ RealProgramParty<T>::RealProgramParty(int argc, const char** argv) :
 	MC = new typename T::MAC_Check(mac_key);
 
 	garble_processor.reset(program);
-	this->processor.open_input_file(N.my_num(), 0);
+	this->processor.open_input_file(N.my_num(), 0, online_opts.cmd_private_input_file);
+	this->processor.setup_redirection(P->my_num(), 0, online_opts, this->processor.out);
 
 	shared_proc = new SubProcessor<T>(dummy_proc, *MC, *prep, *P);
 
