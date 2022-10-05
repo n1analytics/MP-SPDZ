@@ -128,7 +128,7 @@ int main(int argc, const char** argv) {
 	for (int i = 0; i < n; i++)
 		gfp(0).output(*out, false);
 	cerr << "Output written to " << output_name
-			<< ", copy to Player-Data/Private-Input-<playerno>" << endl;
+			<< ", copy to " PREP_DIR "Private-Input-<playerno>" << endl;
 
 	// Clean up file streams.
 	if(!use_stdin) {
