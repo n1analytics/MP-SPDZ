@@ -76,7 +76,8 @@ class Machine : public BaseMachine
   static void init_binary_domains(int security_parameter, int lg2);
 
   Machine(Names& playerNames, bool use_encryption = true,
-          const OnlineOptions opts = sint(), int lg2 = 0);
+          vector<int> dotsSockets = {}, const OnlineOptions opts = sint(),
+          int lg2 = 0);
   ~Machine();
 
   const Names& get_N() { return N; }

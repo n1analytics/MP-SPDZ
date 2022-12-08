@@ -12,6 +12,9 @@
 
 class OnlineMachine
 {
+private:
+    vector<int> dotsSockets;
+
 protected:
     int argc;
     const char** argv;

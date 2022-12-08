@@ -451,6 +451,9 @@ class PlainPlayer : public MultiPlayer<int>
   void setup_sockets(const vector<string>& names, const vector<int>& ports,
       const string& id_base, ServerSocket& server);
 
+private:
+  bool socketsSelfAllocated;
+
 public:
   /**
    * Start a new set of unencrypted connections.
@@ -460,6 +463,7 @@ public:
   PlainPlayer(const Names& Nms, const string& id);
   // legacy interface
   PlainPlayer(const Names& Nms, int id_base = 0);
+  PlainPlayer(const Names& Nms, const string& id, vector<int> sockets);
   ~PlainPlayer();
 
   size_t send_no_stats(int player, const PlayerBuffer& buffer, bool block) const;

@@ -294,7 +294,8 @@ void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc,
     opt.footer += "\nSee also https://mp-spdz.readthedocs.io/en/latest/networking.html "
             "for documentation on the networking setup.\n";
 
-    if (allArgs.size() != 3u - opt.isSet("-p"))
+    bool hasExternPlayerNo = opt.isSet("-p") || opt.isSet("--dots");
+    if (allArgs.size() != 3u - hasExternPlayerNo)
     {
         cerr << "ERROR: incorrect number of arguments to " << argv[0] << endl;
         cerr << "Arguments given were:\n";
@@ -308,9 +309,9 @@ void OnlineOptions::finalize(ez::ezOptionParser& opt, int argc,
     {
         if (opt.isSet("-p"))
             opt.get("-p")->getInt(playerno);
-        else
+        else if (!opt.isSet("--dots"))
             sscanf((*allArgs[1]).c_str(), "%d", &playerno);
-        progname = *allArgs[2 - opt.isSet("-p")];
+        progname = *allArgs[2 - hasExternPlayerNo];
     }
 
     if (!opt.gotRequired(badOptions))

@@ -5,6 +5,7 @@
 
 #include "Memory.hpp"
 #include "Online-Thread.hpp"
+#include "Networking/DotsPlayer.h"
 #include "Protocols/Hemi.hpp"
 #include "Protocols/fake-stuff.hpp"
 
@@ -53,7 +54,7 @@ void Machine<sint, sgf2n>::init_binary_domains(int security_parameter, int lg2)
 
 template<class sint, class sgf2n>
 Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
-    const OnlineOptions opts, int lg2)
+        vector<int> dotsSockets, const OnlineOptions opts, int lg2)
   : my_number(playerNames.my_num()), N(playerNames),
     direct(opts.direct), opening_sum(opts.opening_sum),
     receive_threads(opts.receive_threads), max_broadcast(opts.max_broadcast),
@@ -75,10 +76,14 @@ Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
   mkdir_p(PREP_DIR);
 
   string id = "machine";
-  if (use_encryption)
-    P = new CryptoPlayer(N, id);
-  else
-    P = new PlainPlayer(N, id);
+  if (dotsSockets.size() == 0) {
+      if (use_encryption)
+        P = new CryptoPlayer(N, id);
+      else
+        P = new PlainPlayer(N, id);
+  } else {
+      P = new DotsPlayer(N, id, dotsSockets);
+  }
 
   if (opts.live_prep)
     {

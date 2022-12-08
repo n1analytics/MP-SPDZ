@@ -226,8 +226,10 @@ MultiPlayer<T>::MultiPlayer(const Names& Nms, const string& id) :
 PlainPlayer::PlainPlayer(const Names& Nms, const string& id) :
         MultiPlayer<int>(Nms, id)
 {
-  if (Nms.num_players() > 1)
+  if (Nms.num_players() > 1) {
     setup_sockets(Nms.names, Nms.ports, id, *Nms.server);
+    socketsSelfAllocated = true;
+  }
 }
 
 
@@ -236,9 +238,15 @@ PlainPlayer::PlainPlayer(const Names& Nms, int id_base) :
 {
 }
 
+PlainPlayer::PlainPlayer(const Names& Nms, const string& id, vector<int> socks) :
+        MultiPlayer<int>(Nms, id) {
+  sockets = socks;
+  socketsSelfAllocated = false;
+}
+
 PlainPlayer::~PlainPlayer()
 {
-  if (num_players() > 1)
+  if (num_players() > 1 && socketsSelfAllocated)
     {
       /* Close down the sockets */
       for (auto socket : sockets)
