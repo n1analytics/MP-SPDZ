@@ -21,7 +21,7 @@ void ProcessorBase::open_input_file(int my_num, int thread_num,
 {
     string tmp = prefix;
     if (prefix.empty())
-        tmp = "Player-Data/Input";
+        tmp = PREP_DIR "Input";
 
     open_input_file(get_parameterized_filename(my_num, thread_num, tmp));
 }

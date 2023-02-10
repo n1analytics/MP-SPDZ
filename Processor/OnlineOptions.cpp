@@ -28,7 +28,7 @@ OnlineOptions::OnlineOptions() : playerno(-1)
     direct = false;
     bucket_size = 4;
     security_parameter = DEFAULT_SECURITY;
-    cmd_private_input_file = "Player-Data/Input";
+    cmd_private_input_file = PREP_DIR "Input";
     cmd_private_output_file = "";
     file_prep_per_thread = false;
     trunc_error = DEFAULT_SECURITY;
@@ -62,7 +62,7 @@ OnlineOptions::OnlineOptions(ez::ezOptionParser& opt, int argc,
           0, // Required?
           1, // Number of args expected.
           0, // Delimiter if expecting multiple args.
-          "Prefix for input file path (default: Player-Data/Private-Input). "
+          "Prefix for input file path (default: " PREP_DIR "Private-Input). "
           "Input will be read from {prefix}-P{id}-{thread_id}.", // Help description.
           "-IF", // Flag token.
           "--input-file" // Flag token.
