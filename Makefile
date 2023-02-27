@@ -347,6 +347,11 @@ $(SHARED_OTE): deps/libOTe/libOTe
 	cd deps/libOTe; \
 	python3 build.py --install=$(CURDIR)/local -- -DBUILD_SHARED_LIBS=1 $(OTE_OPTS)
 
+local/lib/libdots.so:
+	$(MAKE) -C deps/libdots libdots.so
+	cp deps/libdots/libdots.so $(CURDIR)/local/lib
+	cp -R deps/libdots/include/. $(CURDIR)/local/include
+
 cmake:
 	wget https://github.com/Kitware/CMake/releases/download/v3.24.1/cmake-3.24.1.tar.gz
 	tar xzvf cmake-3.24.1.tar.gz

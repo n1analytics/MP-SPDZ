@@ -16,3 +16,6 @@
 [submodule "deps/SimplestOT_C"]
 	path = deps/SimplestOT_C
 	url = https://github.com/mkskeller/SimplestOT_C
+[submodule "deps/libdots"]
+	path = deps/libdots
+	url = https://github.com/dtrust-project/libdots.git

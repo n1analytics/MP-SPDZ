@@ -68,7 +68,7 @@ endif
 
 LDLIBS = -lmpirxx -lmpir -lsodium $(MY_LDLIBS)
 LDLIBS +=  -Wl,-rpath -Wl,$(CURDIR)/local/lib -L$(CURDIR)/local/lib
-LDLIBS += -lboost_system -lssl -lcrypto
+LDLIBS += -lboost_system -lssl -lcrypto -ldots
 
 CFLAGS += -I./local/include
 
