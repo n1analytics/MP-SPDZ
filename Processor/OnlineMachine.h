@@ -12,9 +12,6 @@
 
 class OnlineMachine
 {
-private:
-    vector<int> dotsSockets;
-
 protected:
     int argc;
     const char** argv;
@@ -25,6 +22,7 @@ protected:
     Names playerNames;
 
     bool use_encryption;
+    bool use_dots;
 
     ez::ezOptionParser& opt;
 

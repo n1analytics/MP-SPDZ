@@ -13,8 +13,8 @@ void* Coordinator::run_thread(void* coordinator)
     return 0;
 }
 
-Coordinator::Coordinator(const Names& N, string type_name) :
-        P(N, "coordinate-" + type_name), waited(0)
+Coordinator::Coordinator(const Names& N __attribute__((unused)), string type_name __attribute__((unused))) :
+        P(), waited(0)
 {
     pthread_create(&thread, 0, run_thread, this);
 }

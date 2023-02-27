@@ -67,6 +67,7 @@ class Machine : public BaseMachine
   bool receive_threads;
   int max_broadcast;
   bool use_encryption;
+  bool use_dots;
   bool live_prep;
 
   OnlineOptions opts;
@@ -75,9 +76,8 @@ class Machine : public BaseMachine
 
   static void init_binary_domains(int security_parameter, int lg2);
 
-  Machine(Names& playerNames, bool use_encryption = true,
-          vector<int> dotsSockets = {}, const OnlineOptions opts = sint(),
-          int lg2 = 0);
+  Machine(Names& playerNames, bool use_encryption = true, bool use_dots = false,
+          const OnlineOptions opts = sint(), int lg2 = 0);
   ~Machine();
 
   const Names& get_N() { return N; }

@@ -6,13 +6,13 @@
 #ifndef TOOLS_COORDINATOR_H_
 #define TOOLS_COORDINATOR_H_
 
-#include "Networking/Player.h"
+#include "Networking/DotsPlayer.h"
 #include "Signal.h"
 #include "Lock.h"
 
 class Coordinator
 {
-    PlainPlayer P;
+    DotsPlayer P;
 
     WaitQueue<string> in;
 

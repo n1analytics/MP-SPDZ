@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <stdio.h>
+#include <dots.h>
 
 using namespace std;
 
@@ -137,6 +138,7 @@ DishonestMajorityMachine::DishonestMajorityMachine(int argc, const char** argv,
     online_opts.finalize(opt, argc, argv);
 
     use_encryption = opt.isSet("--encrypted");
+    use_dots = opt.isSet("--dots");
 
     start_networking();
 }
@@ -148,40 +150,14 @@ void OnlineMachine::start_networking()
     int pnbase;
     int my_port;
 
-    if (opt.isSet("--dots")) {
-        if (opt.isSet("--encrypted")) {
+    if (use_dots) {
+        if (use_encryption) {
             throw runtime_error("Cannot use encryption over DoTS network");
         }
 
-        string line;
-        string int_str;
-        stringstream line_stream;
-
-        /* Rank. */
-        getline(cin, line);
-        line_stream = stringstream(line);
-        int rank = stoi(line);
-
-        /* Discard input FDs. */
-        getline(cin, line);
-
-        /* Discard output FDs. */
-        getline(cin, line);
-
-        /* Socket FDs. */
-        getline(cin, line);
-        line_stream = stringstream(line);
-        vector<string> names;
-        while (getline(line_stream, int_str, ' ')) {
-            names.push_back(int_str);
-            dotsSockets.push_back(stoi(int_str));
+        if (dots_env_init()) {
+            throw runtime_error("Error initializing DoTS environment");
         }
-
-        cout << rank << ": " << getpid() << '\n';
-        volatile bool loop = true;
-        while (loop) {}
-
-        playerNames.init(rank, -1, names);
     } else {
         opt.get("--portnumbase")->getInt(pnbase);
         opt.get("--hostname")->getString(hostname);
@@ -220,15 +196,15 @@ void OnlineMachine::start_networking()
 }
 
 inline
-Player* OnlineMachine::new_player(const string& id_base)
+Player* OnlineMachine::new_player(const string& id_base __attribute__((unused)))
 {
-    if (dotsSockets.size() == 0) {
+    if (use_dots) {
+        return new DotsPlayer();
+    } else {
         if (use_encryption)
             return new CryptoPlayer(playerNames, id_base);
         else
             return new PlainPlayer(playerNames, id_base);
-    } else {
-        return new DotsPlayer(playerNames, id_base, dotsSockets);
     }
 }
 
@@ -239,7 +215,7 @@ int OnlineMachine::run()
     try
 #endif
     {
-        Machine<T, U>(playerNames, use_encryption, dotsSockets, online_opts, lg2).run(
+        Machine<T, U>(playerNames, use_encryption, use_dots, online_opts, lg2).run(
                 online_opts.progname);
 
         if (online_opts.verbose)
