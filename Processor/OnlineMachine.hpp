@@ -158,6 +158,8 @@ void OnlineMachine::start_networking()
         if (dots_env_init()) {
             throw runtime_error("Error initializing DoTS environment");
         }
+
+        playerNames.init(dots_world_rank, -1, vector<string>(dots_world_size));
     } else {
         opt.get("--portnumbase")->getInt(pnbase);
         opt.get("--hostname")->getString(hostname);
