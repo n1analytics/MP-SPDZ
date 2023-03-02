@@ -6,6 +6,7 @@
 #include "Processor/Machine.h"
 #include "Processor/Processor.h"
 #include "Networking/CryptoPlayer.h"
+#include "Networking/DotsPlayer.h"
 #include "Protocols/ShuffleSacrifice.h"
 #include "Protocols/LimitedPrep.h"
 #include "FHE/FFT.h"
@@ -50,7 +51,11 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
 #endif
   Player* player;
   string id = "thread" + to_string(num);
-  if (machine.use_encryption)
+  if (machine.use_dots)
+    {
+      player = new DotsPlayer();
+    }
+  else if (machine.use_encryption)
     {
 #ifdef VERBOSE_OPTIONS
       cerr << "Using encrypted single-threaded communication" << endl;

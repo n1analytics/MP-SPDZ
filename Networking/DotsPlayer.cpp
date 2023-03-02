@@ -24,6 +24,10 @@ DotsPlayer::DotsPlayer() : Player(Names(dots_world_rank, dots_world_size)) {
     }
 }
 
+string DotsPlayer::get_id() const {
+    return to_string(my_num());
+}
+
 int DotsPlayer::num_players() const {
     return dots_world_size;
 }
@@ -33,31 +37,69 @@ int DotsPlayer::my_num() const {
 }
 
 void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
+    octet lenbuf[LENGTH_SIZE];
+    encode_length(lenbuf, o.get_length(), LENGTH_SIZE);
+
     if (isFirstPlayer) {
-        cout << "First player sending to " << player << endl;
+        if (dots_msg_send(lenbuf, sizeof(lenbuf), (size_t) player)) {
+            throw runtime_error("Error in dots_msg_send");
+        }
         if (dots_msg_send(o.get_data(), o.get_length(), (size_t) player)) {
             throw runtime_error("Error in dots_msg_send");
         }
-        cout << "First player sent to " << player << endl;
     } else {
-        cout << "Non-first player sending to " << player << endl;
+        send(nonFirstSockets[player], lenbuf, sizeof(lenbuf));
         send(nonFirstSockets[player], o.get_data(), o.get_length());
-        cout << "Non-first player sent to " << player << endl;
     }
 }
 
 void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
+    octet lenbuf[LENGTH_SIZE];
+
     if (isFirstPlayer) {
-        cout << "First player receiving from " << player << endl;
-        if (dots_msg_recv(o.get_data(), o.get_length(), (size_t) player, NULL)) {
+        if (dots_msg_recv(lenbuf, sizeof(lenbuf), (size_t) player, NULL)) {
+            throw runtime_error("Error in dots_msg_recv");
+        }
+    } else {
+        receive(nonFirstSockets[player], lenbuf, LENGTH_SIZE);
+    }
+
+    size_t len = decode_length(lenbuf, LENGTH_SIZE);
+    o.reset_write_head();
+    o.resize_min(len);
+    octet *ptr = o.append(len);
+
+    if (isFirstPlayer) {
+        if (dots_msg_recv(ptr, len, (size_t) player, NULL)) {
             throw runtime_error("Error in dots_msg_send");
         }
-        cout << "First player received from " << player << endl;
     } else {
-        cout << "Non-first player receiving from " << player << endl;
-        receive(nonFirstSockets[player], o.get_data(), o.get_length());
-        cout << "Non-first player received from " << player << endl;
+        receive(nonFirstSockets[player], ptr, len);
     }
+}
+
+size_t DotsPlayer::send_no_stats(int player, const PlayerBuffer& buffer,
+        bool block __attribute__((unused))) const {
+    if (isFirstPlayer) {
+        if (dots_msg_send(buffer.data, buffer.size, (size_t) player)) {
+            throw runtime_error("Error in dots_msg_send");
+        }
+    } else {
+        send(nonFirstSockets[player], buffer.data, buffer.size);
+    }
+    return buffer.size;
+}
+
+size_t DotsPlayer::recv_no_stats(int player, const PlayerBuffer& buffer,
+        bool block __attribute__((unused))) const {
+    if (isFirstPlayer) {
+        if (dots_msg_recv(buffer.data, buffer.size, (size_t) player, NULL)) {
+            throw runtime_error("Error in dots_msg_recv");
+        }
+    } else {
+        receive(nonFirstSockets[player], buffer.data, buffer.size);
+    }
+    return buffer.size;
 }
 
 void DotsPlayer::exchange_no_stats(int other, const octetStream& to_send,
@@ -102,7 +144,8 @@ void DotsPlayer::send_receive_all_no_stats(const vector<vector<bool>>& channels,
         if (i == my_num()) {
             continue;
         }
-        if (channels[my_num()][i]) {
+        to_receive.resize(num_players());
+        if (channels[i][my_num()]) {
             receive_player_no_stats(i, to_receive[i]);
         }
     }

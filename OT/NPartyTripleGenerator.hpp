@@ -71,10 +71,10 @@ Spdz2kTripleGenerator<T>::Spdz2kTripleGenerator(const OTTripleSetup& setup,
 
 template<class T>
 OTTripleGenerator<T>::OTTripleGenerator(const OTTripleSetup& setup,
-        const Names& names, int thread_num, int _nTriples, int nloops,
+        const Names& names __attribute__((unused)), int thread_num,
+        int _nTriples, int nloops,
         MascotParams& machine, mac_key_type mac_key, Player* parentPlayer) :
-        globalPlayer(parentPlayer ? *parentPlayer : *new PlainPlayer(names,
-                to_string(thread_num))),
+        globalPlayer(parentPlayer ? *parentPlayer : *new DotsPlayer()),
         parentPlayer(parentPlayer),
         thread_num(thread_num),
         mac_key(mac_key),

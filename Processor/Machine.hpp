@@ -58,7 +58,8 @@ Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
   : my_number(playerNames.my_num()), N(playerNames),
     direct(opts.direct), opening_sum(opts.opening_sum),
     receive_threads(opts.receive_threads), max_broadcast(opts.max_broadcast),
-    use_encryption(use_encryption), live_prep(opts.live_prep), opts(opts)
+    use_encryption(use_encryption), use_dots(use_dots),
+    live_prep(opts.live_prep), opts(opts)
 {
   OnlineOptions::singleton = opts;
 
