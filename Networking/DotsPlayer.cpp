@@ -4,6 +4,8 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <dots.h>
 #include "Networking/data.h"
 #include "Networking/Player.h"
@@ -23,56 +25,84 @@ DotsPlayer::DotsPlayer(const string& id) :
     unique_lock<mutex> lock(receivedSocketsLock);
     for (size_t i = 0; i < dots_world_size; i++) {
         if (i == dots_world_rank) {
-            continue;
-        }
+            /* Set up send-to-self socket with socketpair() and /bin/cat. */
+            int pair[2];
+            if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair)) {
+                throw runtime_error("Error opening socketpair");
+            }
 
-        /* Request a socket from DoTS. */
-        int socket = dots_open_socket(i);
-        if (socket < 0) {
-            throw runtime_error("Failed to open subsequent DoTS socket");
-        }
-
-        if (i > dots_world_rank) {
-            /* For greater ranks, we decide which ID this socket belongs to, so
-             * we send the ID to the other side to notify it of the owner. */
-            char purpose[PURPOSE_LEN];
-            memset(purpose, '\0', PURPOSE_LEN);
-            strncpy(purpose, id.c_str(), PURPOSE_LEN);
-            send(socket, (octet*) purpose, PURPOSE_LEN);
-            sockets[i] = socket;
-
-            cout << "Claiming socket for " << id << endl;
-        } else {
-            /* For lesser ranks, get the purpose by reading from the socket. */
-            char purpose[PURPOSE_LEN];
-            receive(socket, (octet*) purpose, PURPOSE_LEN);
-
-            string purpose_str(purpose);
-            if (purpose_str == id) {
-                /* If the purpose is correct, use the socket. */
-                cout << "Received socket for " << id << ", which matches " << id << endl;
-                sockets[i] = socket;
+            pid_t child = fork();
+            if (child == -1) {
+                throw runtime_error("fork");
+            } else if (child == 0) {
+                /* Child. Move pair[1] to stdin/stdout and execv /bin/cat. */
+                if (dup2(pair[1], STDIN_FILENO) == -1) {
+                    abort();
+                }
+                if (dup2(pair[1], STDOUT_FILENO) == -1) {
+                    abort();
+                }
+                close(pair[0]);
+                close(pair[1]);
+                char *argv[] = { (char *) "/bin/cat", NULL };
+                if (execv(argv[0], argv)) {
+                    abort();
+                }
             } else {
-                cout << "Received socket for " << id << ", but I wanted " << id << endl;
-                /* Put the socket in the receivedSockets map, signal that it
-                 * it's been filled, and sleep until someone else picks up our
-                 * socket. */
-                int foundSocket = -1;
-                while (foundSocket != -1) {
-                    receivedSockets[purpose_str] = socket;
-                    socketReceived.notify_all();
-                    socketReceived.wait(lock);
+                close(pair[1]);
+                sockets[i] = pair[0];
+            }
+        } else {
+            /* Request a socket from DoTS. */
+            int socket = dots_open_socket(i);
+            if (socket < 0) {
+                throw runtime_error("Failed to open subsequent DoTS socket");
+            }
 
-                    /* Search the map for our socket. */
-                    for (auto& it : receivedSockets) {
-                        if (it.first == id) {
-                            foundSocket = it.second;
-                            break;
+            if (i > dots_world_rank) {
+                /* For greater ranks, we decide which ID this socket belongs to,
+                 * so we send the ID to the other side to notify it of the
+                 * owner. */
+                char purpose[PURPOSE_LEN];
+                memset(purpose, '\0', PURPOSE_LEN);
+                strncpy(purpose, id.c_str(), PURPOSE_LEN);
+                send(socket, (octet*) purpose, PURPOSE_LEN);
+                sockets[i] = socket;
+
+                cout << "Claiming socket for " << id << endl;
+            } else {
+                /* For lesser ranks, get the purpose by reading from the
+                 * socket. */
+                char purpose[PURPOSE_LEN];
+                receive(socket, (octet*) purpose, PURPOSE_LEN);
+
+                string purpose_str(purpose);
+                if (purpose_str == id) {
+                    /* If the purpose is correct, use the socket. */
+                    cout << "Received socket for " << id << ", which matches " << id << endl;
+                    sockets[i] = socket;
+                } else {
+                    cout << "Received socket for " << id << ", but I wanted " << id << endl;
+                    /* Put the socket in the receivedSockets map, signal that it
+                     * it's been filled, and sleep until someone else picks up
+                     * our socket. */
+                    int foundSocket = -1;
+                    while (foundSocket != -1) {
+                        receivedSockets[purpose_str] = socket;
+                        socketReceived.notify_all();
+                        socketReceived.wait(lock);
+
+                        /* Search the map for our socket. */
+                        for (auto& it : receivedSockets) {
+                            if (it.first == id) {
+                                foundSocket = it.second;
+                                break;
+                            }
                         }
                     }
+                    sockets[i] = foundSocket;
+                    receivedSockets.erase(id);
                 }
-                sockets[i] = foundSocket;
-                receivedSockets.erase(id);
             }
         }
     }
