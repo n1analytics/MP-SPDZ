@@ -69,7 +69,9 @@ DotsPlayer::DotsPlayer(const string& id) :
                 send(socket, (octet*) purpose, PURPOSE_LEN);
                 sockets[i] = socket;
 
+#ifdef DEBUG_NETWORKING
                 cout << "Claiming socket for " << id << endl;
+#endif
             } else {
                 /* For lesser ranks, get the purpose by reading from the
                  * socket. */
@@ -79,10 +81,15 @@ DotsPlayer::DotsPlayer(const string& id) :
                 string purpose_str(purpose);
                 if (purpose_str == id) {
                     /* If the purpose is correct, use the socket. */
-                    cout << "Received socket for " << id << ", which matches " << id << endl;
                     sockets[i] = socket;
+#ifdef DEBUG_NETWORKING
+                    cout << "Received socket for " << id << ", which matches " << id << endl;
+#endif
                 } else {
+#ifdef DEBUG_NETWORKING
                     cout << "Received socket for " << id << ", but I wanted " << id << endl;
+#endif
+
                     /* Put the socket in the receivedSockets map, signal that it
                      * it's been filled, and sleep until someone else picks up
                      * our socket. */
@@ -120,12 +127,24 @@ void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
     octet lenbuf[LENGTH_SIZE];
     encode_length(lenbuf, o.get_length(), LENGTH_SIZE);
 
+#ifdef VERBOSE_COMM
+    cout << id << ": Sending " << o.get_length() << " bytes to " << player << endl;
+#endif
+
     send(sockets[player], lenbuf, sizeof(lenbuf));
     send(sockets[player], o.get_data(), o.get_length());
+
+#ifdef VERBOSE_COMM
+    cout << id << ": Sent " << o.get_length() << " bytes to " << player << endl;
+#endif
 }
 
 void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
     octet lenbuf[LENGTH_SIZE];
+
+#ifdef VERBOSE_COMM
+    cout << id << ": Receiving from " << player << endl;
+#endif
 
     receive(sockets[player], lenbuf, LENGTH_SIZE);
 
@@ -135,17 +154,40 @@ void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
     octet *ptr = o.append(len);
 
     receive(sockets[player], ptr, len);
+
+#ifdef VERBOSE_COMM
+    cout << id << ": Received " << o.get_length() << " bytes from " << player << endl;
+#endif
 }
 
 size_t DotsPlayer::send_no_stats(int player, const PlayerBuffer& buffer,
         bool block __attribute__((unused))) const {
+
+#ifdef VERBOSE_COMM
+    cout << id << ": [Player buffer] Sending " << buffer.size << " bytes to " << player << endl;
+#endif
     send(sockets[player], buffer.data, buffer.size);
+
+#ifdef VERBOSE_COMM
+    cout << id << ": [Player buffer] Sent " << buffer.size << " bytes to " << player << endl;
+#endif
+
     return buffer.size;
 }
 
 size_t DotsPlayer::recv_no_stats(int player, const PlayerBuffer& buffer,
         bool block __attribute__((unused))) const {
+
+#ifdef VERBOSE_COMM
+    cout << id << ": [Player buffer] Receiving " << buffer.size << " bytes from " << player << endl;
+#endif
+
     receive(sockets[player], buffer.data, buffer.size);
+
+#ifdef VERBOSE_COMM
+    cout << id << ": [Player buffer] Received " << buffer.size << " bytes from " << player << endl;
+#endif
+
     return buffer.size;
 }
 
