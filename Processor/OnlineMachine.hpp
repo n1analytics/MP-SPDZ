@@ -196,10 +196,10 @@ void OnlineMachine::start_networking()
 }
 
 inline
-Player* OnlineMachine::new_player(const string& id_base __attribute__((unused)))
+Player* OnlineMachine::new_player(const string& id_base)
 {
     if (use_dots) {
-        return new DotsPlayer();
+        return new DotsPlayer(id_base);
     } else {
         if (use_encryption)
             return new CryptoPlayer(playerNames, id_base);

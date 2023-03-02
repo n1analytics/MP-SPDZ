@@ -1,17 +1,30 @@
 #ifndef NETWORKING_DOTSPLAYER_H_
 #define NETWORKING_DOTSPLAYER_H_
 
+#include <condition_variable>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 #include "Networking/Player.h"
 
 class DotsPlayer : public Player {
   private:
+    /* Socket matching. */
+    static mutex receivedSocketsLock;
+    static unordered_map<string, int> receivedSockets;
+    static condition_variable socketReceived;
+
+    string id;
     vector<int> sockets;
 
   public:
-    DotsPlayer();
+    DotsPlayer(const string& id);
     ~DotsPlayer() override;
 
-    virtual inline string get_id() const override;
+    virtual inline string get_id() const override {
+        return id;
+    }
+
     virtual int num_players() const override;
     virtual int my_num() const override;
 

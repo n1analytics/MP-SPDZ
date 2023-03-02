@@ -53,7 +53,7 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
   string id = "thread" + to_string(num);
   if (machine.use_dots)
     {
-      player = new DotsPlayer();
+      player = new DotsPlayer(id);
     }
   else if (machine.use_encryption)
     {

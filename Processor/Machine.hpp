@@ -78,7 +78,7 @@ Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
 
   string id = "machine";
   if (use_dots) {
-      P = new DotsPlayer();
+      P = new DotsPlayer(id);
   } else {
       if (use_encryption)
         P = new CryptoPlayer(N, id);
