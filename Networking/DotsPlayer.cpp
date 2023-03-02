@@ -2,25 +2,17 @@
 #include "Networking/Player.h"
 #include <dots.h>
 
-bool DotsPlayer::envIsInitted = false;
-
 DotsPlayer::DotsPlayer() : Player(Names(dots_world_rank, dots_world_size)) {
-    if (envIsInitted) {
-        envIsInitted = true;
-        isFirstPlayer = true;
-    } else {
-        isFirstPlayer = false;
-        nonFirstSockets.resize(dots_world_size);
-        for (size_t i = 0; i < dots_world_size; i++) {
-            if (i == dots_world_rank) {
-                continue;
-            }
-            int socket = dots_open_socket(i);
-            if (socket < 0) {
-                throw runtime_error("Failed to open subsequent DoTS socket");
-            }
-            nonFirstSockets[i] = socket;
+    sockets.resize(dots_world_size);
+    for (size_t i = 0; i < dots_world_size; i++) {
+        if (i == dots_world_rank) {
+            continue;
         }
+        int socket = dots_open_socket(i);
+        if (socket < 0) {
+            throw runtime_error("Failed to open subsequent DoTS socket");
+        }
+        sockets[i] = socket;
     }
 }
 
@@ -40,65 +32,32 @@ void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
     octet lenbuf[LENGTH_SIZE];
     encode_length(lenbuf, o.get_length(), LENGTH_SIZE);
 
-    if (isFirstPlayer) {
-        if (dots_msg_send(lenbuf, sizeof(lenbuf), (size_t) player)) {
-            throw runtime_error("Error in dots_msg_send");
-        }
-        if (dots_msg_send(o.get_data(), o.get_length(), (size_t) player)) {
-            throw runtime_error("Error in dots_msg_send");
-        }
-    } else {
-        send(nonFirstSockets[player], lenbuf, sizeof(lenbuf));
-        send(nonFirstSockets[player], o.get_data(), o.get_length());
-    }
+    send(sockets[player], lenbuf, sizeof(lenbuf));
+    send(sockets[player], o.get_data(), o.get_length());
 }
 
 void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
     octet lenbuf[LENGTH_SIZE];
 
-    if (isFirstPlayer) {
-        if (dots_msg_recv(lenbuf, sizeof(lenbuf), (size_t) player, NULL)) {
-            throw runtime_error("Error in dots_msg_recv");
-        }
-    } else {
-        receive(nonFirstSockets[player], lenbuf, LENGTH_SIZE);
-    }
+    receive(sockets[player], lenbuf, LENGTH_SIZE);
 
     size_t len = decode_length(lenbuf, LENGTH_SIZE);
     o.reset_write_head();
     o.resize_min(len);
     octet *ptr = o.append(len);
 
-    if (isFirstPlayer) {
-        if (dots_msg_recv(ptr, len, (size_t) player, NULL)) {
-            throw runtime_error("Error in dots_msg_send");
-        }
-    } else {
-        receive(nonFirstSockets[player], ptr, len);
-    }
+    receive(sockets[player], ptr, len);
 }
 
 size_t DotsPlayer::send_no_stats(int player, const PlayerBuffer& buffer,
         bool block __attribute__((unused))) const {
-    if (isFirstPlayer) {
-        if (dots_msg_send(buffer.data, buffer.size, (size_t) player)) {
-            throw runtime_error("Error in dots_msg_send");
-        }
-    } else {
-        send(nonFirstSockets[player], buffer.data, buffer.size);
-    }
+    send(sockets[player], buffer.data, buffer.size);
     return buffer.size;
 }
 
 size_t DotsPlayer::recv_no_stats(int player, const PlayerBuffer& buffer,
         bool block __attribute__((unused))) const {
-    if (isFirstPlayer) {
-        if (dots_msg_recv(buffer.data, buffer.size, (size_t) player, NULL)) {
-            throw runtime_error("Error in dots_msg_recv");
-        }
-    } else {
-        receive(nonFirstSockets[player], buffer.data, buffer.size);
-    }
+    receive(sockets[player], buffer.data, buffer.size);
     return buffer.size;
 }
 

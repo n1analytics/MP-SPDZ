@@ -5,9 +5,7 @@
 
 class DotsPlayer : public Player {
   private:
-    static bool envIsInitted;
-    bool isFirstPlayer;
-    vector<int> nonFirstSockets;
+    vector<int> sockets;
 
   public:
     DotsPlayer();
