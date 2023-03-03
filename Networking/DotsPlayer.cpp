@@ -64,8 +64,8 @@ DotsPlayer::DotsPlayer(const string& id) :
                  * so we send the ID to the other side to notify it of the
                  * owner. */
                 char purpose[PURPOSE_LEN];
-                memset(purpose, '\0', PURPOSE_LEN);
-                strncpy(purpose, id.c_str(), PURPOSE_LEN);
+                strncpy(purpose, id.c_str(), PURPOSE_LEN - 1);
+                purpose[PURPOSE_LEN - 1] = '\0';
                 send(socket, (octet*) purpose, PURPOSE_LEN);
                 sockets[i] = socket;
 
