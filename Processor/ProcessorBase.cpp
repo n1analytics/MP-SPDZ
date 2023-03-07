@@ -17,13 +17,17 @@ string ProcessorBase::get_parameterized_filename(int my_num, int thread_num, con
 }
 
 void ProcessorBase::open_input_file(int my_num, int thread_num,
-        const string& prefix)
+        const string& prefix, bool use_dots)
 {
-    string tmp = prefix;
-    if (prefix.empty())
-        tmp = "Player-Data/Input";
+    if (use_dots) {
+        open_dots_file(thread_num);
+    } else {
+        string tmp = prefix;
+        if (prefix.empty())
+            tmp = "Player-Data/Input";
 
-    open_input_file(get_parameterized_filename(my_num, thread_num, tmp));
+        open_input_file(get_parameterized_filename(my_num, thread_num, tmp));
+    }
 }
 
 void ProcessorBase::setup_redirection(int my_num, int thread_num,

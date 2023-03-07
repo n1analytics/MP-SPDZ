@@ -9,6 +9,8 @@
 #include <stack>
 #include <string>
 #include <fstream>
+#include <memory>
+#include <ext/stdio_filebuf.h>
 using namespace std;
 
 #include "Tools/ExecutionStats.h"
@@ -20,7 +22,8 @@ class ProcessorBase
   // Stack
   stack<long> stacki;
 
-  ifstream input_file;
+  unique_ptr<istream> input_file;
+  unique_ptr<__gnu_cxx::stdio_filebuf<char>> input_fdbuf;
   string input_filename;
   size_t input_counter;
 
@@ -52,7 +55,8 @@ public:
     }
 
   void open_input_file(const string& name);
-  void open_input_file(int my_num, int thread_num, const string& prefix="");
+  void open_dots_file(int thread_num);
+  void open_input_file(int my_num, int thread_num, const string& prefix="", bool use_dots = false);
 
   template<class T>
   T get_input(bool interactive, const int* params);

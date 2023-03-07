@@ -12,7 +12,10 @@
 #include "FloatInput.h"
 #include "Tools/Exceptions.h"
 
+#include <memory>
 #include <iostream>
+#include <ext/stdio_filebuf.h>
+#include <dots.h>
 
 inline
 void ProcessorBase::open_input_file(const string& name)
@@ -20,8 +23,18 @@ void ProcessorBase::open_input_file(const string& name)
 #ifdef DEBUG_FILES
     cerr << "opening " << name << endl;
 #endif
-    input_file.open(name);
-    input_filename = name;
+
+    input_file = std::make_unique<ifstream>(name);
+}
+
+inline
+void ProcessorBase::open_dots_file(int thread_num)
+{
+    if (thread_num < 0 || (size_t) thread_num >= dots_in_fds_len) {
+        throw runtime_error("No DoTS input present for thread num = " + to_string(thread_num));
+    }
+    input_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(dots_in_fds[thread_num], ios::in);
+    input_file = make_unique<istream>(input_fdbuf.get());
 }
 
 template<class T>
@@ -30,7 +43,7 @@ T ProcessorBase::get_input(bool interactive, const int* params)
     if (interactive)
         return get_input<T>(cin, "standard input", params);
     else
-        return get_input<T>(input_file, input_filename, params);
+        return get_input<T>(*input_file, input_filename, params);
 }
 
 template<class T>

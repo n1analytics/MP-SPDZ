@@ -78,7 +78,7 @@ Processor<sint, sgf2n>::Processor(int thread_num,Player& P,
       get_parameterized_filename(P.my_num(), thread_num,
           PREP_DIR "Binary-Output"), ios_base::out);
 
-  open_input_file(P.my_num(), thread_num, machine.opts.cmd_private_input_file);
+  open_input_file(P.my_num(), thread_num, machine.opts.cmd_private_input_file, machine.use_dots);
 
   secure_prng.ReSeed();
   shared_prng.SeedGlobally(P, false);
