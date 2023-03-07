@@ -83,7 +83,7 @@ Processor<sint, sgf2n>::Processor(int thread_num,Player& P,
   secure_prng.ReSeed();
   shared_prng.SeedGlobally(P, false);
 
-  setup_redirection(P.my_num(), thread_num, opts, out);
+  setup_redirection(P.my_num(), thread_num, opts, machine.use_dots, out);
   Procb.out = out;
 }
 

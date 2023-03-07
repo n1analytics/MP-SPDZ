@@ -32,7 +32,7 @@ public:
             out = 0;
     }
 
-    void redirect_to_file(ofstream& out_file)
+    void redirect_to_file(ostream& out_file)
     {
         out = &out_file;
     }

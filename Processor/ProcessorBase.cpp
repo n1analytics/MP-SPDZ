@@ -31,18 +31,27 @@ void ProcessorBase::open_input_file(int my_num, int thread_num,
 }
 
 void ProcessorBase::setup_redirection(int my_num, int thread_num,
-		OnlineOptions& opts, SwitchableOutput& out)
+        OnlineOptions& opts, bool use_dots, SwitchableOutput& out)
 {
-    // only output on party 0 if not interactive
-    bool always_stdout = opts.cmd_private_output_file == ".";
-    bool output = my_num == 0 or opts.interactive or always_stdout;
-    out.activate(output);
+    if (use_dots) {
+        if (thread_num < 0 || (size_t) thread_num >= dots_out_fds_len) {
+            throw runtime_error("No DoTS output present for thread num = " + to_string(thread_num));
+        }
+        output_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(dots_out_fds[thread_num], ios::out);
+        output_file = make_unique<ostream>(output_fdbuf.get());
+        out.activate(true);
+        out.redirect_to_file(*output_file);
+    } else {
+        // only output on party 0 if not interactive
+        bool always_stdout = opts.cmd_private_output_file == ".";
+        bool output = my_num == 0 or opts.interactive or always_stdout;
+        out.activate(output);
 
-    if (not (opts.cmd_private_output_file.empty() or always_stdout))
-    {
-        const string stdout_filename = get_parameterized_filename(my_num,
-                thread_num, opts.cmd_private_output_file);
-        stdout_redirect_file.open(stdout_filename.c_str(), ios_base::out);
-        out.redirect_to_file(stdout_redirect_file);
+        if (not (opts.cmd_private_output_file.empty() or always_stdout)) {
+            const string stdout_filename = get_parameterized_filename(my_num,
+                    thread_num, opts.cmd_private_output_file);
+            output_file = make_unique<ofstream>(stdout_filename.c_str());
+            out.redirect_to_file(*output_file);
+        }
     }
 }

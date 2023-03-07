@@ -37,7 +37,8 @@ protected:
 public:
   ExecutionStats stats;
 
-  ofstream stdout_redirect_file;
+  unique_ptr<ostream> output_file;
+  unique_ptr<__gnu_cxx::stdio_filebuf<char>> output_fdbuf;
 
   ProcessorBase();
 
@@ -64,7 +65,7 @@ public:
   T get_input(istream& is, const string& input_filename, const int* params);
 
   void setup_redirection(int my_nu, int thread_num, OnlineOptions& opts,
-      SwitchableOutput& out);
+          bool use_dots, SwitchableOutput& out);
 };
 
 #endif /* PROCESSOR_PROCESSORBASE_H_ */
