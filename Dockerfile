@@ -55,12 +55,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                 vim \
                 gdb \
                 valgrind \
+		tmux \
         && rm -rf /var/lib/apt/lists/*
 
 ENV MP_SPDZ_HOME /usr/src/MP-SPDZ
 WORKDIR $MP_SPDZ_HOME
 
 RUN pip install --upgrade pip ipython
+RUN pip install --upgrade pip scikit-learn
 
 COPY . .
 
