@@ -73,7 +73,7 @@ class Zp_Data
   Zp_Data() :
       montgomery(0), pi(0), mask(0), pr_byte_length(0), pr_bit_length(0)
   {
-    t = -1;
+    t = MAX_MOD_SZ;
     overhang = 0;
     shanks_r = 0;
   }
