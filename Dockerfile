@@ -80,8 +80,8 @@ RUN echo "CXX = ${cxx}" >> CONFIG.mine \
         && echo "PREP_DIR = '-DPREP_DIR=\"${prep_dir}/\"'" >> CONFIG.mine \
         && echo "SSL_DIR = '-DSSL_DIR=\"${ssl_dir}/\"'" >> CONFIG.mine
 
-# ssl keys
-ARG cryptoplayers=0
+# ssl keys 
+ARG cryptoplayers=3 
 ENV PLAYERS ${cryptoplayers}
 RUN ./Scripts/setup-ssl.sh ${cryptoplayers} ${ssl_dir}
 

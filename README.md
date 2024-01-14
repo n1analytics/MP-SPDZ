@@ -78,7 +78,7 @@ can speed up the last step by running `make -j8 mascot-party.x` beforehand.
 Build a docker image for `mascot-party.x`:
 
 ```
-docker build --tag mpspdz:mascot-party --build-arg machine=mascot-party.x .
+docker build --tag mpspdz:mascot-party --build-arg src=tutorial --build-arg machine=mascot-party.x .
 ```
 
 Run the [the tutorial](Programs/Source/tutorial.mpc):
