@@ -25,6 +25,7 @@ The schedule file is as follows in ASCII text::
   <compilation command line>
   <domain requirements>
   opts: <potential optimizations>
+  sec:<security parameter>
 
 Domain requirements and potential optimizations are related to
 :ref:`nonlinear`. Domain requirements is one of the following:
@@ -55,6 +56,7 @@ schedule file::
   ./compile.py tutorial
   lgp:106
   opts: edabit trunc_pr split
+  sec:40
 
 This says that program has only one thread running one bytecode file,
 which is stored in ``tutorial-0.bc`` and has 19444 instructions. It
