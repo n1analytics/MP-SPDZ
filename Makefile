@@ -255,7 +255,7 @@ rep4-ecdsa-party.x: GC/Rep4Prep.o
 fake-spdz-ecdsa-party.x: $(OT) $(LIBSIMPLEOT)
 emulate.x: GC/FakeSecret.o
 semi-bmr-party.x: $(GC_SEMI) $(OT)
-real-bmr-party.x: $(OT)
+real-bmr-party.x: $(OT) $(BMR)
 paper-example.x: $(VM) $(OT) $(FHEOFFLINE)
 binary-example.x: $(VM) $(OT) GC/PostSacriBin.o $(GC_SEMI) GC/AtlasSecret.o GC/Rep4Prep.o
 mixed-example.x: $(VM) $(OT) GC/PostSacriBin.o $(GC_SEMI) GC/AtlasSecret.o GC/Rep4Prep.o Machines/Tinier.o
