@@ -6322,6 +6322,28 @@ class Array(_vectorizable):
             from . import sorting
             sorting.radix_sort(self, self, n_bits=n_bits)
 
+    def to_row_matrix(self):
+        """
+        Returns the array as 1xN matrix.
+
+        Warning: This operation is in-place (without copying data), i.e., all changes to the values of the matrix will also affect the original array.
+        :return: Matrix
+        """
+        assert self.value_type.n_elements() == 1 and \
+                   self.value_type.mem_size() == 1
+        return Matrix(1, self.length, self.value_type, address=self.address)
+
+    def to_column_matrix(self):
+        """
+        Returns the array as Nx1 matrix.
+
+        Warning: This operation is in-place (without copying data), i.e., all changes to the values of the matrix will also affect the original array.
+        :return: Matrix
+        """
+        assert self.value_type.n_elements() == 1 and \
+               self.value_type.mem_size() == 1
+        return Matrix(self.length, 1, self.value_type, address=self.address)
+
     def Array(self, size):
         # compatibility with registers
         return Array(size, self.value_type)

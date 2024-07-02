@@ -49,35 +49,32 @@ def test_matrix(expected, actual):
 
                 crash()
 
-break_point()
-def hacky_array_dot_matrix(arr, mat):
-    # Arrays sadly do not have a dot function, therefore the array is converted into a 1 times n Matrix by copying memory addresses.
-    tmp = sint.Matrix(rows=1, columns=len(arr), address=arr.address)
-    result = tmp.dot(mat)
-    return sint.Array(mat.shape[1], result.address)
-
 start_timer(3)
 
-e3 = hacky_array_dot_matrix(a, c)
+e3 = a.to_row_matrix().dot(c).to_array()
 # b[0] = e3[0]
-f3 = hacky_array_dot_matrix(b, d)
+f3 = b.to_row_matrix().dot(d).to_array()
+g3 = c.dot(b.to_column_matrix()).to_array()
 
 stop_timer(3)
 
 e3 = e3.reveal()
 f3 = f3.reveal()
+g3 = g3.reveal()
 
 e3.print_reveal_nested()
 f3.print_reveal_nested()
+g3.print_reveal_nested()
 
 test_array([70, 80, 90], e3)
 test_array([56, 50, 44, 38], f3)
+test_array([10, 28, 46, 64], g3)
 
 start_timer(4)
 
-e4 = hacky_array_dot_matrix(a, c)
+e4 = a.to_row_matrix().dot(c).to_array()
 b[-1] = e4[0]
-f4 = hacky_array_dot_matrix(b, d)
+f4 = b.to_row_matrix().dot(d).to_array()
 
 stop_timer(4)
 
@@ -85,8 +82,6 @@ test_array([70, 80, 90], e4)
 test_array([332, 257, 182, 107], f4)
 
 f4.print_reveal_nested()
-
-# TODO: Crashes
 
 
 start_timer(5)
