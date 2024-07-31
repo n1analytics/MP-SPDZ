@@ -250,11 +250,9 @@ class TreeTrainer:
         b = self.ApplyTests(x, a, t)
         p = SortPerm(g.get_vector().bit_not())
         self.nids[k], self.aids[k], self.thresholds[k]= FormatLayer_without_crop(g[:], NID, a, t, debug=self.debug)
+        self.g, self.x, self.y, self.NID, self.pis = self.UpdateState(g, x, y, pis, NID, b, k)
 
-        @if_e(k < (len(self.nids)-1))
-        def _():
-            self.g, self.x, self.y, self.NID, self.pis = self.UpdateState(g, x, y, pis, NID, b, k)
-        @else_
+        @if_(k >= (len(self.nids)-1))
         def _():
             self.label = Array.create_from(s0 < s1)
 
