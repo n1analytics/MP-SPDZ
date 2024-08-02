@@ -211,7 +211,6 @@ def CropLayer(k, *v):
 def TrainLeafNodes(h, g, y, NID):
     assert len(g) == len(y)
     assert len(g) == len(NID)
-    Label = GroupSum(g, y.bit_not()) < GroupSum(g, y)
     return FormatLayer(h, g, NID, Label)
 
 def GroupSame(g, y):
@@ -352,6 +351,23 @@ class TreeTrainer:
             print_ln('tt=%s', util.reveal(tt))
         return a[:], tt[:]
 
+    def SetupPerm(self, g, x, y):
+        m = len(x)
+        n = len(y)
+        pis = get_type(y).Matrix(m, n)
+        @for_range_multithread(self.n_threads, 1, m)
+        def _(j):
+            @if_e(self.attr_lengths[j])
+            def _():
+                pis[j][:] = self.GetInversePermutation(GetSortPerm([x[j]], x[j], y,
+                                        n_bits=[1], time=time))
+            @else_
+            def _():
+                pis[j][:] = self.GetInversePermutation(GetSortPerm([x[j]], x[j], y,
+                                        n_bits=[None],
+                                        time=time))
+        return pis
+
     def TrainInternalNodes(self, k, x, y, g, NID):
         assert len(g) == len(y)
         for xx in x:
@@ -377,12 +393,21 @@ class TreeTrainer:
         y = self.y
         g = self.g
         NID = self.NID
+        pis = self.pis
         if self.debug > 1:
             print_ln('g=%s', g.reveal())
             print_ln('y=%s', y.reveal())
             print_ln('x=%s', x.reveal_nested())
-        self.nids[k], self.aids[k], self.thresholds[k], b = \
-            self.TrainInternalNodes(k, x, y, g, NID)
+
+        s0 = GroupSum(g, y.get_vector().bit_not())
+        s1 = GroupSum(g, y.get_vector())
+
+        a, t = self.TestSelection(g, x, y, pis, s0, s1)
+        b = self.ApplyTests(x, a, t)
+        p = SortPerm(g.get_vector().bit_not())
+
+        self.nids[k], self.aids[k], self.thresholds[k]= FormatLayer_without_crop(g[:], NID, a, t, debug=self.debug)
+
         if self.debug > 1:
             print_ln('layer %s:', k)
             for name, data in zip(('NID', 'AID', 'Thr'),
@@ -422,6 +447,8 @@ class TreeTrainer:
         self.x = Matrix.create_from(x)
         self.nids, self.aids = [sint.Matrix(h, n) for i in range(2)]
         self.thresholds = self.x.value_type.Matrix(h, n)
+        self.identity_permutation = sint.Array(n)
+        self.label = sintbit.Array(n)
         self.n_threads = n_threads
         self.debug_selection = False
         self.debug_threading = False
@@ -431,11 +458,19 @@ class TreeTrainer:
 
     def train(self):
         """ Train and return decision tree. """
+        n = len(self.y)
+
+        @for_range(n)
+        def _(i):
+            self.identity_permutation[i] = sint(i)
+
         h = len(self.nids)
+        self.pis = self.SetupPerm(self.g, self.x, self.y)
+
         @for_range(h)
         def _(k):
             self.train_layer(k)
-        return self.get_tree(h)
+        return self.get_tree(h, self.label)
 
     def train_with_testing(self, *test_set, output=False):
         """ Train decision tree and test against test data.
@@ -459,12 +494,12 @@ class TreeTrainer:
                                    n_threads=self.n_threads)
         return tree
 
-    def get_tree(self, h):
+    def get_tree(self, h, Label):
         Layer = [None] * (h + 1)
         for k in range(h):
             Layer[k] = CropLayer(k, self.nids[k], self.aids[k],
                                  self.thresholds[k])
-        Layer[h] = TrainLeafNodes(h, self.g[:], self.y[:], self.NID)
+        Layer[h] = TrainLeafNodes(h, self.g[:], self.y[:], self.NID, Label)
         return Layer
 
 def DecisionTreeTraining(x, y, h, binary=False):

@@ -19,7 +19,7 @@ df_y = Array.create_from(df_y[0])
 program.set_bit_length(32)
 sfix.set_precision(16, 31)
 
-from Compiler.decision_tree_optimized import TreeClassifier
+from Compiler.decision_tree import TreeClassifier
 
 tree = TreeClassifier(max_depth=int(program.args[3]), n_threads=4)
 
