@@ -157,32 +157,35 @@ def GroupMax(g, keys, *x):
                  util.reveal(t), util.reveal(keys), util.reveal(x))
     return [GroupSum(g, t[:] * xx) for xx in [keys] + x]
 
-def ModifiedGini(g, y, debug=False):
+def ComputeGini(g, x, y, notysum, ysum, debug=False):
     assert len(g) == len(y)
     y = [y.get_vector().bit_not(), y]
     u = [GroupPrefixSum(g, yy) for yy in y]
-    s = [GroupSum(g, yy) for yy in y]
+    s = [notysum, ysum]
     w = [ss - uu for ss, uu in zip(s, u)]
     us = sum(u)
     ws = sum(w)
     uqs = u[0] ** 2 + u[1] ** 2
     wqs = w[0] ** 2 + w[1] ** 2
-    res = sfix(uqs) / us + sfix(wqs) / ws
-    if debug:
-        print_ln('g=%s y=%s s=%s',
-                 util.reveal(g), util.reveal(y),
-                 util.reveal(s))
-        print_ln('u0=%s', util.reveal(u[0]))
-        print_ln('u0=%s', util.reveal(u[1]))
-        print_ln('us=%s', util.reveal(us))
-        print_ln('w0=%s', util.reveal(w[0]))
-        print_ln('w1=%s', util.reveal(w[1]))
-        print_ln('ws=%s', util.reveal(ws))
-        print_ln('uqs=%s', util.reveal(uqs))
-        print_ln('wqs=%s', util.reveal(wqs))
-    if debug:
-        print_ln('gini %s %s', type(res), util.reveal(res))
-    return res
+    res_num = ws * uqs + us * wqs
+    res_den = us * ws
+    xx = x
+    t = get_type(x).Array(len(x))
+    t[-1] = MIN_VALUE
+    t.assign_vector(xx.get_vector(size=len(x) - 1) + \
+                    xx.get_vector(size=len(x) - 1, base=1))
+    gg = g
+    p = sint.Array(len(x))
+    p[-1] = 1
+    p.assign_vector(gg.get_vector(base=1, size=len(x) - 1).bit_or(
+        xx.get_vector(size=len(x) - 1) == \
+        xx.get_vector(size=len(x) - 1, base=1)))
+    break_point()
+    res_num = p[:].if_else(MIN_VALUE, res_num)
+    res_den = p[:].if_else(1, res_den)
+    t = p[:].if_else(MIN_VALUE, t[:])
+    return res_num, res_den, t
+
 
 MIN_VALUE = -10000
 
@@ -243,6 +246,11 @@ class TreeTrainer:
     .. _`Hamada et al.`: https://arxiv.org/abs/2112.12906
 
     """
+    def GetInversePermutation(self, perm):
+        res = Array.create_from(self.identity_permutation)
+        reveal_sort(perm, res)
+        return res
+
     def ApplyTests(self, x, AID, Threshold):
         m = len(x)
         n = len(AID)
@@ -260,96 +268,49 @@ class TreeTrainer:
             print_ln('threshold %s', util.reveal(Threshold))
         return 2 * xx < Threshold
 
-    def AttributeWiseTestSelection(self, g, x, y, time=False, debug=False):
-        assert len(g) == len(x)
-        assert len(g) == len(y)
-        if time:
-            start_timer(2)
-        s = ModifiedGini(g, y, debug=debug or self.debug > 2)
-        if time:
-            stop_timer(2)
-        if debug or self.debug > 1:
-            print_ln('gini %s', s.reveal())
-        xx = x
-        t = get_type(x).Array(len(x))
-        t[-1] = MIN_VALUE
-        t.assign_vector(xx.get_vector(size=len(x) - 1) + \
-                        xx.get_vector(size=len(x) - 1, base=1))
-        gg = g
-        p = sint.Array(len(x))
-        p[-1] = 1
-        p.assign_vector(gg.get_vector(base=1, size=len(x) - 1).bit_or(
-            xx.get_vector(size=len(x) - 1) == \
-            xx.get_vector(size=len(x) - 1, base=1)))
-        break_point()
-        if debug:
-            print_ln('attribute t=%s p=%s', util.reveal(t), util.reveal(p))
-        s = p[:].if_else(MIN_VALUE, s)
-        t = p[:].if_else(MIN_VALUE, t[:])
-        if debug:
-            print_ln('attribute s=%s t=%s', util.reveal(s), util.reveal(t))
-        if time:
-            start_timer(3)
-        s, t = GroupMax(gg, s, t)
-        if time:
-            stop_timer(3)
-        if debug:
-            print_ln('attribute s=%s t=%s', util.reveal(s), util.reveal(t))
-        return t, s
-
-    def GlobalTestSelection(self, x, y, g):
-        assert len(y) == len(g)
+    def TestSelection(self, g, x, y, pis, notysum, ysum, time=False):
         for xx in x:
             assert(len(xx) == len(g))
+        assert len(g) == len(y)
         m = len(x)
         n = len(y)
+        gg = g
         u, t = [get_type(x).Matrix(m, n) for i in range(2)]
         v = get_type(y).Matrix(m, n)
-        s = sfix.Matrix(m, n)
+        s_num = get_type(y).Matrix(m, n)
+        s_den = get_type(y).Matrix(m, n)
+        a = sint.Array(n)
+
+        notysum_arr = Array.create_from(notysum)
+        ysum_arr = Array.create_from(ysum)
+
         @for_range_multithread(self.n_threads, 1, m)
         def _(j):
             single = not self.n_threads or self.n_threads == 1
             time = self.time and single
-            if debug:
+            if self.debug_selection:
                 print_ln('run %s', j)
-            @if_e(self.attr_lengths[j])
-            def _():
-                u[j][:], v[j][:] = Sort((PrefixSum(g), x[j]), x[j], y,
-                                        n_bits=[util.log2(n), 1], time=time)
-            @else_
-            def _():
-                u[j][:], v[j][:] = Sort((PrefixSum(g), x[j]), x[j], y,
-                                        n_bits=[util.log2(n), None],
-                                        time=time)
-            if self.debug_threading:
-                print_ln('global sort %s %s %s', j, util.reveal(u[j]),
-                         util.reveal(v[j]))
-            t[j][:], s[j][:] = self.AttributeWiseTestSelection(
-                g, u[j], v[j], time=time, debug=self.debug_selection)
-            if self.debug_threading:
-                print_ln('global attribute %s %s %s', j, util.reveal(t[j]),
-                         util.reveal(s[j]))
-        n = len(g)
-        a = sint.Array(n)
-        if self.debug_threading:
-            print_ln('global s=%s', util.reveal(s))
-        if self.debug_gini:
-            print_ln('Gini indices ' + ' '.join(str(i) + ':%s' for i in range(m)),
-                     *(ss[0].reveal() for ss in s))
-        if self.time:
-            start_timer(4)
-        if self.debug > 1:
-            print_ln('s=%s', s.reveal_nested())
-            print_ln('t=%s', t.reveal_nested())
-        a[:], tt = VectMax((s[j][:] for j in range(m)), range(m),
-                           (t[j][:] for j in range(m)), debug=self.debug > 1)
-        tt = Array.create_from(tt)
-        if self.time:
-            stop_timer(4)
-        if self.debug > 1:
-            print_ln('a=%s', util.reveal(a))
-            print_ln('tt=%s', util.reveal(tt))
-        return a[:], tt[:]
+            u[j].assign_vector(x[j])
+            v[j].assign_vector(y)
+            reveal_sort(pis[j], u[j])
+            reveal_sort(pis[j], v[j])
+            s_num[j][:], s_den[j][:], t[j][:] = ComputeGini(g, u[j], v[j], notysum_arr, ysum_arr, debug=False)
+
+        ss_num, ss_den, tt, aa = VectMax((s_num[j][:] for j in range(m)), (s_den[j][:] for j in range(m)), (t[j][:] for j in range(m)), range(m), debug=self.debug)
+
+        aaa = get_type(y).Array(n)
+        ttt = get_type(x).Array(n)
+
+        GroupMax_num, GroupMax_den, GroupMax_ttt, GroupMax_aaa = GroupMax(g, ss_num, ss_den, tt, aa)
+
+        f = sint.Array(n)
+        f = (self.zeros.get_vector() == notysum).bit_or(self.zeros.get_vector() == ysum)
+        aaa_vector, ttt_vector = f.if_else(0, GroupMax_aaa), f.if_else(MIN_VALUE, GroupMax_ttt)
+
+        ttt.assign_vector(ttt_vector)
+        aaa.assign_vector(aaa_vector)
+
+        return aaa, ttt
 
     def SetupPerm(self, g, x, y):
         m = len(x)
@@ -367,6 +328,30 @@ class TreeTrainer:
                                         n_bits=[None],
                                         time=time))
         return pis
+
+    def UpdateState(self, g, x, y, pis, NID, b, k):
+        m = len(x)
+        n = len(y)
+        q = SortPerm(b)
+        
+        y[:] = q.apply(y)
+        NID[:] = 2 ** k * b + NID
+        NID[:] = q.apply(NID)
+        g[:] = GroupFirstOne(g, b.bit_not()) + GroupFirstOne(g, b)
+        g[:] = q.apply(g)
+
+        b_arith = sint.Array(n)
+        b_arith = Array.create_from(b)
+        
+        @for_range_multithread(self.n_threads, 1, m)
+        def _(j):
+            x[j][:] = q.apply(x[j])
+            b_permuted = ApplyPermutation(pis[j], b_arith)
+            
+            pis[j] = q.apply(pis[j])
+            pis[j] = ApplyInversePermutation(pis[j], SortPerm(b_permuted).perm)
+
+        return [g, x, y, NID, pis]
 
     def TrainInternalNodes(self, k, x, y, g, NID):
         assert len(g) == len(y)
@@ -407,21 +392,11 @@ class TreeTrainer:
         p = SortPerm(g.get_vector().bit_not())
 
         self.nids[k], self.aids[k], self.thresholds[k]= FormatLayer_without_crop(g[:], NID, a, t, debug=self.debug)
-
-        if self.debug > 1:
-            print_ln('layer %s:', k)
-            for name, data in zip(('NID', 'AID', 'Thr'),
-                                  (self.nids[k], self.aids[k],
-                                   self.thresholds[k])):
-                print_ln(' %s: %s', name, data.reveal())
-        NID[:] = 2 ** k * b + NID
-        b_not = b.bit_not()
-        if self.debug > 1:
-            print_ln('b_not=%s', b_not.reveal())
-        g[:] = GroupFirstOne(g, b_not) + GroupFirstOne(g, b)
-        y[:], g[:], NID[:], *xx = Sort([b], y, g, NID, *x, n_bits=[1])
-        for i, xxx in enumerate(xx):
-            x[i] = xxx
+        self.g, self.x, self.y, self.NID, self.pis = self.UpdateState(g, x, y, pis, NID, b, k)
+        
+        @if_(k >= (len(self.nids)-1))
+        def _():
+            self.label = Array.create_from(s0 < s1)
 
     def __init__(self, x, y, h, binary=False, attr_lengths=None,
                  n_threads=None):
