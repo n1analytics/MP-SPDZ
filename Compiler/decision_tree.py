@@ -10,6 +10,31 @@ debug = False
 debug_split = False
 max_leaves = None
 
+def GetSortPerm(keys, *to_sort, n_bits=None, time=False):
+    """
+        Compute and return secret shared permutation that stably sorts :param keys.
+    """
+    for k in keys:
+        assert len(k) == len(keys[0])
+    n_bits = n_bits or [None] * len(keys)
+    bs = Matrix.create_from(sum([k.get_vector().bit_decompose(nb)
+             for k, nb in reversed(list(zip(keys, n_bits)))], []))
+    get_vec = lambda x: x[:] if isinstance(x, Array) else x
+    res = Matrix.create_from(get_vec(x).v if isinstance(get_vec(x), sfix) else x
+                             for x in to_sort)
+    res = res.transpose()
+    return radix_sort_from_matrix(bs, res)
+
+def ApplyPermutation(perm, x):
+    res = Array.create_from(x)
+    reveal_sort(perm, res, False)
+    return res
+
+def ApplyInversePermutation(perm, x):
+    res = Array.create_from(x)
+    reveal_sort(perm, res, True)
+    return res
+
 def get_type(x):
     if isinstance(x, (Array, SubMultiArray)):
         return x.value_type
@@ -21,6 +46,12 @@ def get_type(x):
             return type(x)
     else:
         return type(x)
+
+
+def Custom_GT_Fractions(x_num, x_den, y_num, y_den, n_threads=2):
+    b = (x_num*y_den) > (x_den*y_num)
+    b = Array.create_from(b).get_vector()
+    return b
 
 def PrefixSum(x):
     return x.get_vector().prefix_sum()
@@ -86,17 +117,9 @@ def Sort(keys, *to_sort, n_bits=None, time=False):
 
 def VectMax(key, *data, debug=False):
     def reducer(x, y):
-        b = x[0] > y[0]
-        if debug:
-            print_ln('max b=%s', b.reveal())
+        b = x[0]*y[1] > y[0]*x[1]
         return [b.if_else(xx, yy) for xx, yy in zip(x, y)]
-    if debug:
-        key = list(key)
-        data = [list(x) for x in data]
-        print_ln('vect max key=%s data=%s', util.reveal(key), util.reveal(data))
     res = util.tree_reduce(reducer, zip(key, *data))[1:]
-    if debug:
-        print_ln('vect max res=%s', util.reveal(res))
     return res
 
 def GroupSum(g, x):
@@ -119,9 +142,6 @@ def GroupPrefixSum(g, x):
     return s.get_vector(size=len(x), base=1) - GroupSum(g, q)
 
 def GroupMax(g, keys, *x):
-    if debug:
-        print_ln('group max input g=%s keys=%s x=%s', util.reveal(g),
-                 util.reveal(keys), util.reveal(x))
     assert len(keys) == len(g)
     for xx in x:
         assert len(xx) == len(g)
@@ -138,23 +158,17 @@ def GroupMax(g, keys, *x):
         vsize = n - w
         g_new.assign_vector(g_old.get_vector(size=vsize).bit_or(
             g_old.get_vector(size=vsize, base=w)), base=w)
-        b = keys.get_vector(size=vsize) > keys.get_vector(size=vsize, base=w)
+        b = Custom_GT_Fractions(keys.get_vector(size=vsize), x[0].get_vector(size=vsize), keys.get_vector(size=vsize, base=w), x[0].get_vector(size=vsize, base=w))
+        #b = keys.get_vector(size=vsize) > keys.get_vector(size=vsize, base=w)
         for xx in [keys] + x:
             a = b.if_else(xx.get_vector(size=vsize),
                           xx.get_vector(size=vsize, base=w))
             xx.assign_vector(g_old.get_vector(size=vsize, base=w).if_else(
                 xx.get_vector(size=vsize, base=w), a), base=w)
         break_point()
-        if debug:
-            print_ln('group max w=%s b=%s a=%s keys=%s x=%s g=%s', w, b.reveal(),
-                     util.reveal(a), util.reveal(keys),
-                     util.reveal(x), g_new.reveal())
     t = sint.Array(len(g))
     t[-1] = 1
     t.assign_vector(g.get_vector(size=n - 1, base=1))
-    if debug:
-        print_ln('group max end g=%s t=%s keys=%s x=%s', util.reveal(g),
-                 util.reveal(t), util.reveal(keys), util.reveal(x))
     return [GroupSum(g, t[:] * xx) for xx in [keys] + x]
 
 def ComputeGini(g, x, y, notysum, ysum, debug=False):
@@ -196,12 +210,8 @@ def FormatLayer_without_crop(g, *a, debug=False):
     for x in a:
         assert len(x) == len(g)
     v = [g.if_else(aa, 0) for aa in a]
-    if debug:
-        print_ln('format in %s', util.reveal(a))
-        print_ln('format mux %s', util.reveal(v))
-    v = Sort([g.bit_not()], *v, n_bits=[1])
-    if debug:
-        print_ln('format sort %s', util.reveal(v))
+    p = SortPerm(g.get_vector().bit_not())
+    v = [p.apply(vv) for vv in v]
     return v
 
 def CropLayer(k, *v):
@@ -216,36 +226,12 @@ def TrainLeafNodes(h, g, y, NID):
     assert len(g) == len(NID)
     return FormatLayer(h, g, NID, Label)
 
-def GroupSame(g, y):
-    assert len(g) == len(y)
-    s = GroupSum(g, [sint(1)] * len(g))
-    s0 = GroupSum(g, y.bit_not())
-    s1 = GroupSum(g, y)
-    if debug_split:
-        print_ln('group same g=%s', util.reveal(g))
-        print_ln('group same y=%s', util.reveal(y))
-    return (s == s0).bit_or(s == s1)
-
 def GroupFirstOne(g, b):
     assert len(g) == len(b)
     s = GroupPrefixSum(g, b)
     return s * b == 1
 
 class TreeTrainer:
-    """ Decision tree training by `Hamada et al.`_
-
-    :param x: sample data (by attribute, list or
-      :py:obj:`~Compiler.types.Matrix`)
-    :param y: binary labels (list or sint vector)
-    :param h: height (int)
-    :param binary: binary attributes instead of continuous
-    :param attr_lengths: attribute description for mixed data
-      (list of 0/1 for continuous/binary)
-    :param n_threads: number of threads (default: single thread)
-
-    .. _`Hamada et al.`: https://arxiv.org/abs/2112.12906
-
-    """
     def GetInversePermutation(self, perm):
         res = Array.create_from(self.identity_permutation)
         reveal_sort(perm, res)
@@ -258,14 +244,10 @@ class TreeTrainer:
         for xx in x:
             assert len(xx) == len(AID)
         e = sint.Matrix(m, n)
-        AID = Array.create_from(AID)
         @for_range_multithread(self.n_threads, 1, m)
         def _(j):
             e[j][:] = AID[:] == j
         xx = sum(x[j] * e[j] for j in range(m))
-        if self.debug > 1:
-            print_ln('apply e=%s xx=%s', util.reveal(e), util.reveal(xx))
-            print_ln('threshold %s', util.reveal(Threshold))
         return 2 * xx < Threshold
 
     def TestSelection(self, g, x, y, pis, notysum, ysum, time=False):
@@ -353,25 +335,6 @@ class TreeTrainer:
 
         return [g, x, y, NID, pis]
 
-    def TrainInternalNodes(self, k, x, y, g, NID):
-        assert len(g) == len(y)
-        for xx in x:
-            assert len(xx) == len(g)
-        AID, Threshold = self.GlobalTestSelection(x, y, g)
-        s = GroupSame(g[:], y[:])
-        if self.debug > 1 or debug_split:
-            print_ln('AID=%s', util.reveal(AID))
-            print_ln('Threshold=%s', util.reveal(Threshold))
-            print_ln('GroupSame=%s', util.reveal(s))
-        AID, Threshold = s.if_else(0, AID), s.if_else(MIN_VALUE, Threshold)
-        if self.debug > 1 or debug_split:
-            print_ln('AID=%s', util.reveal(AID))
-            print_ln('Threshold=%s', util.reveal(Threshold))
-        b = self.ApplyTests(x, AID, Threshold)
-        layer = FormatLayer_without_crop(g[:], NID, AID, Threshold,
-                                         debug=self.debug > 1)
-        return *layer, b
-
     @method_block
     def train_layer(self, k):
         x = self.x
@@ -379,10 +342,6 @@ class TreeTrainer:
         g = self.g
         NID = self.NID
         pis = self.pis
-        if self.debug > 1:
-            print_ln('g=%s', g.reveal())
-            print_ln('y=%s', y.reveal())
-            print_ln('x=%s', x.reveal_nested())
 
         s0 = GroupSum(g, y.get_vector().bit_not())
         s1 = GroupSum(g, y.get_vector())
@@ -400,6 +359,21 @@ class TreeTrainer:
 
     def __init__(self, x, y, h, binary=False, attr_lengths=None,
                  n_threads=None):
+        """ Securely Training Decision Trees Efficiently by `Bhardwaj et al.`_ : https://eprint.iacr.org/2024/1077.pdf
+
+        This protocol has communication complexity O( mN logN + hmN + hN log N) which is an improvement of ~min(h, m, log N) over `Hamada et al.`_ : https://petsymposium.org/popets/2023/popets-2023-0021.pdf
+
+        To run this protocol, at the root of the MP-SPDZ repo, run Scripts/compile-run.py -H HOSTS -E ring custom_data_dt $((2**13)) 11 4 -Z 3 -R 128
+
+        :param x: Attribute values 
+        :param y: Binary labels 
+        :param h: Height of the decision tree
+        :param binary: Binary attributes instead of continuous
+        :param attr_lengths: Attribute description for mixed data
+      (list of 0/1 for continuous/binary)
+        :param n_threads: Number of threads 
+
+        """
         assert not (binary and attr_lengths)
         if binary:
             attr_lengths = [1] * len(x)
@@ -412,6 +386,7 @@ class TreeTrainer:
         Matrix.disable_index_checks()
         for xx in x:
             assert len(xx) == len(y)
+        m = len(x)
         n = len(y)
         self.g = sint.Array(n)
         self.g.assign_all(0)
@@ -459,7 +434,7 @@ class TreeTrainer:
         """
         for k in range(len(self.nids)):
             self.train_layer(k)
-            tree = self.get_tree(k + 1)
+            tree = self.get_tree(k + 1, self.label)
             if output:
                 output_decision_tree(tree)
             test_decision_tree('train', tree, self.y, self.x,
