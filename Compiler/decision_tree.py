@@ -119,7 +119,7 @@ def VectMax(key, *data, debug=False):
     def reducer(x, y):
         b = x[0]*y[1] > y[0]*x[1]
         return [b.if_else(xx, yy) for xx, yy in zip(x, y)]
-    res = util.tree_reduce(reducer, zip(key, *data))[1:]
+    res = util.tree_reduce(reducer, zip(key, *data))
     return res
 
 def GroupSum(g, x):
@@ -221,7 +221,7 @@ def CropLayer(k, *v):
         n = 2 ** k
     return [vv[:min(n, len(vv))] for vv in v]
 
-def TrainLeafNodes(h, g, y, NID):
+def TrainLeafNodes(h, g, y, NID, Label, debug=False):
     assert len(g) == len(y)
     assert len(g) == len(NID)
     return FormatLayer(h, g, NID, Label)
@@ -248,7 +248,7 @@ class TreeTrainer:
         def _(j):
             e[j][:] = AID[:] == j
         xx = sum(x[j] * e[j] for j in range(m))
-        return 2 * xx < Threshold
+        return 2 * xx.get_vector() < Threshold.get_vector()
 
     def TestSelection(self, g, x, y, pis, notysum, ysum, time=False):
         for xx in x:
@@ -395,10 +395,13 @@ class TreeTrainer:
         self.NID.assign_all(1)
         self.y = Array.create_from(y)
         self.x = Matrix.create_from(x)
+        self.pis = sint.Matrix(m, n)
         self.nids, self.aids = [sint.Matrix(h, n) for i in range(2)]
         self.thresholds = self.x.value_type.Matrix(h, n)
         self.identity_permutation = sint.Array(n)
         self.label = sintbit.Array(n)
+        self.zeros = sint.Array(n)
+        self.zeros.assign_all(0)
         self.n_threads = n_threads
         self.debug_selection = False
         self.debug_threading = False
