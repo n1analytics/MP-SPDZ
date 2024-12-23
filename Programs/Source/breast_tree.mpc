@@ -16,7 +16,7 @@ y_test = sint.input_tensor_via(0, y_test)
 
 sfix.set_precision_from_args(program)
 
-from Compiler.decision_tree_optimized import TreeClassifier
+from Compiler.decision_tree import TreeClassifier
 
 tree = TreeClassifier(max_depth=5, n_threads=2)
 
