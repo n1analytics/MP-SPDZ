@@ -221,9 +221,10 @@ def CropLayer(k, *v):
         n = 2 ** k
     return [vv[:min(n, len(vv))] for vv in v]
 
-def TrainLeafNodes(h, g, y, NID, Label, debug=False):
+def TrainLeafNodes(h, g, y, NID, debug=False):
     assert len(g) == len(y)
     assert len(g) == len(NID)
+    Label = GroupSum(g, y.bit_not()) < GroupSum(g, y)
     return FormatLayer(h, g, NID, Label)
 
 def GroupFirstOne(g, b):
@@ -342,7 +343,7 @@ class TreeTrainer:
         g = self.g
         NID = self.NID
         pis = self.pis
-
+        
         s0 = GroupSum(g, y.get_vector().bit_not())
         s1 = GroupSum(g, y.get_vector())
 
@@ -353,10 +354,6 @@ class TreeTrainer:
         self.nids[k], self.aids[k], self.thresholds[k]= FormatLayer_without_crop(g[:], NID, a, t, debug=self.debug)
         self.g, self.x, self.y, self.NID, self.pis = self.UpdateState(g, x, y, pis, NID, b, k)
         
-        @if_(k >= (len(self.nids)-1))
-        def _():
-            self.label = Array.create_from(s0 < s1)
-
     def __init__(self, x, y, h, binary=False, attr_lengths=None,
                  n_threads=None):
         """ Securely Training Decision Trees Efficiently by `Bhardwaj et al.`_ : https://eprint.iacr.org/2024/1077.pdf
@@ -399,7 +396,9 @@ class TreeTrainer:
         self.nids, self.aids = [sint.Matrix(h, n) for i in range(2)]
         self.thresholds = self.x.value_type.Matrix(h, n)
         self.identity_permutation = sint.Array(n)
-        self.label = sintbit.Array(n)
+        @for_range(n)
+        def _(i):
+            self.identity_permutation[i] = sint(i)
         self.zeros = sint.Array(n)
         self.zeros.assign_all(0)
         self.n_threads = n_threads
@@ -412,18 +411,13 @@ class TreeTrainer:
     def train(self):
         """ Train and return decision tree. """
         n = len(self.y)
-
-        @for_range(n)
-        def _(i):
-            self.identity_permutation[i] = sint(i)
-
         h = len(self.nids)
         self.pis = self.SetupPerm(self.g, self.x, self.y)
 
         @for_range(h)
         def _(k):
             self.train_layer(k)
-        return self.get_tree(h, self.label)
+        return self.get_tree(h)
 
     def train_with_testing(self, *test_set, output=False):
         """ Train decision tree and test against test data.
@@ -435,9 +429,10 @@ class TreeTrainer:
         :returns: tree
 
         """
+        self.pis = self.SetupPerm(self.g, self.x, self.y)
         for k in range(len(self.nids)):
             self.train_layer(k)
-            tree = self.get_tree(k + 1, self.label)
+            tree = self.get_tree(k + 1)
             if output:
                 output_decision_tree(tree)
             test_decision_tree('train', tree, self.y, self.x,
@@ -447,12 +442,12 @@ class TreeTrainer:
                                    n_threads=self.n_threads)
         return tree
 
-    def get_tree(self, h, Label):
+    def get_tree(self, h):
         Layer = [None] * (h + 1)
         for k in range(h):
             Layer[k] = CropLayer(k, self.nids[k], self.aids[k],
                                  self.thresholds[k])
-        Layer[h] = TrainLeafNodes(h, self.g[:], self.y[:], self.NID, Label)
+        Layer[h] = TrainLeafNodes(h, self.g[:], self.y[:], self.NID)
         return Layer
 
 def DecisionTreeTraining(x, y, h, binary=False):
